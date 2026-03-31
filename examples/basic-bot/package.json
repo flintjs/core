@@ -1,0 +1,27 @@
+{
+    "name": "flint.js-example-bot",
+    "private": true,
+    "version": "0.1.0",
+    "description": "Example Fluxer bot using @flint.js/core",
+    "type": "module",
+    "main": "build/src/index.js",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "prisma generate && tsc && tsc-alias",
+        "check": "tsc --noEmit"
+    },
+    "keywords": [],
+    "author": "bizojs",
+    "license": "Apache-2.0",
+    "devDependencies": {
+        "@types/node": "^25.5.0",
+        "tsc-alias": "^1.8.16",
+        "tsx": "^4.21.0",
+        "typescript": "^6.0.2"
+    },
+    "dependencies": {
+        "@flint.js/core": "workspace:*",
+        "@fluxerjs/core": "^1.2.4",
+        "dotenv": "^17.3.1"
+    }
+}

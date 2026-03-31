@@ -1,0 +1,40 @@
+{
+    "name": "@flint.js/core",
+    "version": "0.1.0",
+    "description": "TypeScript-first framework for building powerful Fluxer Bots",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "type": "module",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/flintjs/core",
+        "directory": "packages/core"
+    },
+    "bugs": "https://github.com/flintjs/core/issues",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc -b"
+    },
+    "keywords": ["fluxer", "fluxerjs", "framework"],
+    "peerDependencies": {
+        "@fluxerjs/core": "^1.2.4"
+    },
+    "devDependencies": {
+        "typescript": "^5.4.0"
+    },
+    "dependencies": {
+        "@types/node": "^25.5.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}
