@@ -1,6 +1,6 @@
 import { default as commandExecutor } from "../executor/CommandExecutor"
-import { PreconditionStore } from "../preconditions/PreconditionStore"
 import type { HandlerLoadResult, FlintClientOptions } from "../types"
+import { InhibitorStore } from "../inhibitors/InhibitorStore"
 import { CommandHandler } from "../handlers/CommandHandler"
 import { EventHandler } from "../handlers/EventHandler"
 import { Client } from "@fluxerjs/core"
@@ -8,7 +8,7 @@ import { Client } from "@fluxerjs/core"
 export class FlintClient extends Client {
     public readonly flintCommands: CommandHandler
     public readonly flintEvents: EventHandler
-    public readonly preconditions: PreconditionStore
+    public readonly inhibitors: InhibitorStore
 
     public readonly prefix?: string
     public readonly mentionPrefix?: boolean
@@ -22,7 +22,7 @@ export class FlintClient extends Client {
 
         this.flintCommands = new CommandHandler(this, this.#options.handlers?.commands)
         this.flintEvents = new EventHandler(this, this.#options.handlers?.events)
-        this.preconditions = new PreconditionStore()
+        this.inhibitors = new InhibitorStore()
 
         this.prefix = this.#options.prefix
         this.mentionPrefix = this.#options.mentionPrefix

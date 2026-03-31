@@ -1,8 +1,8 @@
 import type { CommandContext } from "../../executor/CommandContext"
-import { BasePrecondition, ok, err } from "../BasePrecondition"
 import type { FlintCommand } from "../../factories/command"
+import { BaseInhibitor, ok, err } from "../BaseInhibitor"
 
-export class ChannelTypePrecondition extends BasePrecondition {
+export class ChannelType extends BaseInhibitor {
     readonly name = "channel"
 
     run(command: FlintCommand, _ctx: CommandContext) {

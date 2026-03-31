@@ -1,9 +1,9 @@
 import type { CommandContext } from "../../executor/CommandContext"
-import { BasePrecondition, ok, err } from "../BasePrecondition"
 import type { FlintCommand } from "../../factories/command"
+import { BaseInhibitor, ok, err } from "../BaseInhibitor"
 import { PermissionsBitField } from "@fluxerjs/core"
 
-export class UserPermissionsPrecondition extends BasePrecondition {
+export class UserPermissions extends BaseInhibitor {
     readonly name = "user.permissions"
 
     async run(command: FlintCommand, ctx: CommandContext) {

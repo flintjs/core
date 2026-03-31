@@ -2,7 +2,7 @@
 
 # @flint.js
 
-Flint is a bot framework built on top of `@fluxerjs/core` that gives you a clean, opinionated way to build Fluxer bots. Instead of wiring everything up yourself, Flint handles the boilerplate, command handling, event listening, preconditions and more, so you can focus on building the things that actually matter.
+Flint is a bot framework built on top of `@fluxerjs/core` that gives you a clean, opinionated way to build Fluxer bots. Instead of wiring everything up yourself, Flint handles the boilerplate, command handling, event listening, inhibitors and more, so you can focus on building the things that actually matter.
 
 ---
 
@@ -12,7 +12,7 @@ Flint is a bot framework built on top of `@fluxerjs/core` that gives you a clean
 
 - Whether you're new to bot development or just new to Fluxer, Flint's API is designed to be intuitive and approachable. If you've used a bot framework before, maybe on Discord, you should feel right at home.
 
-- Flint is designed to be extensible. Need custom preconditions? Simply create and register them on your bot
+- Flint is designed to be extensible. Need custom inhibitor? Simply create and register them on your bot
 
 ---
 

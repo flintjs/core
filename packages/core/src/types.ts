@@ -1,4 +1,4 @@
-import { PreconditionResult } from "./preconditions/BasePrecondition"
+import { InhibitorResult } from "./inhibitors/BaseInhibitor"
 import { CommandContext } from "./executor/CommandContext"
 import { Message } from "@fluxerjs/core"
 
@@ -17,7 +17,7 @@ export type FlintClientEventsType = typeof FlintClientEvents[keyof typeof FlintC
 
 export interface FlintEvents {
     [FlintClientEvents.CommandDenied]: [payload: {
-        result: PreconditionResult
+        result: InhibitorResult
         ctx: CommandContext
     }]
     [FlintClientEvents.CommandError]: [payload: {

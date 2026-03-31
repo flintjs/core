@@ -1,8 +1,8 @@
 import type { CommandContext } from "../../executor/CommandContext"
-import { BasePrecondition, ok, err } from "../BasePrecondition"
 import type { FlintCommand } from "../../factories/command"
+import { BaseInhibitor, ok, err } from "../BaseInhibitor"
 
-export class DisabledPrecondition extends BasePrecondition {
+export class Disabled extends BaseInhibitor {
     readonly name = "disabled"
 
     run(command: FlintCommand, _ctx: CommandContext) {
