@@ -1,4 +1,4 @@
-import { buildContext, buildPreconditionContext } from "./CommandContext"
+import { buildContext, buildInhibitorContext } from "./CommandContext"
 import { defineEvent } from "../factories/event"
 import { parseMessage } from "./CommandParser"
 import { FlintClientEvents } from "../types"
@@ -49,8 +49,8 @@ export default defineEvent({
             (client.mentionPrefix && !this.getMentionRegex(client.user!.id).exec(parsed.prefix))
         ) return
 
-        const preconditionCtx = buildPreconditionContext(client, message, parsed, command)
-        const result = await client.preconditions.run(command, preconditionCtx)
+        const preconditionCtx = buildInhibitorContext(client, message, parsed, command)
+        const result = await client.inhibitors.run(command, preconditionCtx)
         if (!result.ok) {
             client.emit(FlintClientEvents.CommandDenied, { result, ctx: preconditionCtx })
             return

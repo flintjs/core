@@ -30,7 +30,7 @@ export function buildContext(client: FlintClient, message: Message, parsed: Pars
     ]
 }
 
-export function buildPreconditionContext(
+export function buildInhibitorContext(
     client: FlintClient,
     message: Message,
     parsed: ParseResult,
