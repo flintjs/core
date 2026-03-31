@@ -7,22 +7,23 @@ export type InhibitorType = "disabled" | "channel" | "user.permissions" | "bot.p
 
 export type InhibitorResult =
     | { ok: true }
-    | {
-        ok: false
-        reason: Extract<InhibitorType, "disabled" | "channel" | "unknown">
-        message?: string
-    }
-    | {
-        ok: false
-        reason: Extract<InhibitorType, "user.permissions" | "bot.permissions">
-        message?: string
-        missing?: PermissionResolvable[]
-    }
+    | { ok: false; reason: "disabled" | "channel" | "unknown" }
+    | { ok: false; reason: "user.permissions"; missing?: PermissionResolvable[] }
+    | { ok: false; reason: "bot.permissions"; missing?: PermissionResolvable[] }
+    | { ok: false; reason: "cooldown"; remaining?: number; formatted?: string }
+
+type InhibitorExtra<R extends FailureReason> = R extends FailureReason
+    ? Omit<Extract<InhibitorResult, { ok: false; reason: R }>, "ok" | "reason">
+    : never
 
 type FailureReason = Extract<InhibitorResult, { ok: false }>["reason"]
 
 export const ok = (): InhibitorResult => ({ ok: true })
-export const err = (reason: FailureReason, message?: string, missing?: PermissionResolvable[]): InhibitorResult => ({ ok: false, reason, message, missing })
+
+export const err = <R extends FailureReason>(
+    reason: R,
+    extra?: InhibitorExtra<R>
+): InhibitorResult => ({ ok: false, reason, ...extra } as InhibitorResult)
 
 export abstract class BaseInhibitor {
     abstract name: string

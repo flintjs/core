@@ -1,5 +1,4 @@
 import { defineEvent, FlintClientEvents } from "@flint.js/core"
-import { EmbedBuilder } from "@fluxerjs/core"
 
 export default defineEvent({
     event: FlintClientEvents.CommandDenied,
@@ -25,7 +24,7 @@ export default defineEvent({
                     fields: [
                         {
                             name: "Permissions",
-                            value: result.missing!.map((p) => `\`${p}\``).join(", ")
+                            value: result.missing?.map((p) => `\`${p}\``).join(", ")
                         }
                     ]
                 }
@@ -36,6 +35,13 @@ export default defineEvent({
                     description: "This command is currently disabled"
                 }
             break
+            case "cooldown":
+                embed = {
+                    title: "Cooldown",
+                    description: `⏱️ You can run this command again in \`${result.formatted}\``
+                }
+            break
+            default: return
         }
 
         await ctx.message.reply({ embeds: [embed] })

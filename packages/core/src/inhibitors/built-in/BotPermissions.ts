@@ -18,6 +18,6 @@ export class BotPermissions extends BaseInhibitor {
         const missing = command.permissions
             .filter((p) => !guild.members.me?.permissions.has(p))
             .map((p) => new PermissionsBitField(p).toArray())
-        return missing?.length ? err("bot.permissions", undefined, missing) : ok()
+        return missing?.length ? err("bot.permissions", { missing }) : ok()
     }
 }

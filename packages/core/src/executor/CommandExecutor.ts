@@ -14,6 +14,7 @@ export default defineEvent({
     },
 
     async execute(client, message) {
+        await client.monitors.run(client, message)
 
         const allPrefixes = [
             client.prefix,
@@ -49,17 +50,18 @@ export default defineEvent({
             (client.mentionPrefix && !this.getMentionRegex(client.user!.id).exec(parsed.prefix))
         ) return
 
-        const preconditionCtx = buildInhibitorContext(client, message, parsed, command)
-        const result = await client.inhibitors.run(command, preconditionCtx)
+        const ctx = buildInhibitorContext(client, message, parsed, command)
+        const result = await client.inhibitors.run(command, ctx)
         if (!result.ok) {
-            client.emit(FlintClientEvents.CommandDenied, { result, ctx: preconditionCtx })
+            client.emit(FlintClientEvents.CommandDenied, { result, ctx: ctx })
             return
         }
 
-        const ctx = buildContext(client, message, parsed, command)
+        const commandCtx = buildContext(client, message, parsed, command)
         try {
-            await command.execute(...ctx)
-            client.emit(FlintClientEvents.CommandSuccess, { ctx })
+            await command.execute(...commandCtx)
+            client.emit(FlintClientEvents.CommandSuccess, { ctx: commandCtx })
+            await client.finalizers.run(client, ctx)
         } catch (error) {
             client.emit(FlintClientEvents.CommandError, { ctx, error })
         }

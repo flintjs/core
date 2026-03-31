@@ -5,6 +5,7 @@ import { BotPermissions } from "./built-in/BotPermissions"
 import type { FlintCommand } from "../factories/command"
 import { ChannelType } from "./built-in/ChannelType"
 import { Disabled } from "./built-in/Disabled"
+import { Cooldown } from "./built-in/Cooldown"
 
 export class InhibitorStore {
 
@@ -12,7 +13,8 @@ export class InhibitorStore {
         new Disabled(),
         new ChannelType(),
         new UserPermissions(),
-        new BotPermissions()
+        new BotPermissions(),
+        new Cooldown()
     ]
 
     register(inhibitors: BaseInhibitor): void {

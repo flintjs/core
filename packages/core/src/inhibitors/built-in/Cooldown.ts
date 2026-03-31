@@ -2,16 +2,11 @@ import type { CommandContext } from "../../executor/CommandContext"
 import type { FlintCommand } from "../../factories/command"
 import { BaseInhibitor, ok, err } from "../BaseInhibitor"
 import ms from "ms"
-import { Message } from "@fluxerjs/core"
 
 export class Cooldown extends BaseInhibitor {
     readonly name = "cooldown"
-    cooldowns: WeakMap<FlintCommand, number>
 
-    constructor(public readonly seconds: number) {
-        super()
-        this.cooldowns = new WeakMap()
-    }
+    #cooldowns = new Map<string, number>()
 
     parseCooldown(cooldown: FlintCommand["cooldown"]): number | null {
         let cooldownMs
@@ -20,11 +15,6 @@ export class Cooldown extends BaseInhibitor {
 
         if (!cooldownMs) return null
         return cooldownMs
-    }
-
-    getCooldown(message: Message, command: FlintCommand): number | null {
-        let cooldown = this.cooldowns.get(command)
-        return 0
     }
 
     run(command: FlintCommand, ctx: CommandContext) {
@@ -37,13 +27,19 @@ export class Cooldown extends BaseInhibitor {
             return ok()
         }
 
+        const key = `${ctx.message.author.id}:${command.name}`
+        const last = this.#cooldowns.get(key)
+        const now = Date.now()
+
+        if (last && now - last < cooldown) {
+            const remaining = cooldown - (now - last)
+            const formatted = ms(remaining, { long: true })
+            return err("cooldown", { remaining, formatted })
+        }
+
+        this.#cooldowns.set(key, now)
+
         return ok()
-
-        // if (!command.allowedChannels?.length) return ok()
-        // const inAllowed = command.allowedChannels.includes(ctx.message.channelId)
-        // return inAllowed ? ok() : err("channel")
-
-
 
     }
 }

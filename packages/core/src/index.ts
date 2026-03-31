@@ -17,3 +17,7 @@ export { type FlintEvent, type ExtendedEvents, defineEvent } from "./factories/e
 export { BaseInhibitor } from "./inhibitors/BaseInhibitor"
 export type { InhibitorResult, InhibitorType } from "./inhibitors/BaseInhibitor"
 export { ok, err } from "./inhibitors/BaseInhibitor"
+
+export { BaseMonitor } from "./monitors/BaseMonitor"
+
+export { BaseFinalizer } from "./finalizers/BaseFinalizer"

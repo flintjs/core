@@ -22,6 +22,6 @@ export class UserPermissions extends BaseInhibitor {
         const missing = command.permissions
             .filter((p) => !member.permissions.has(p))
             .map((p) => new PermissionsBitField(p).toArray())
-        return missing?.length ? err("user.permissions", undefined, missing) : ok()
+        return missing?.length ? err("user.permissions", { missing }) : ok()
     }
 }

@@ -5,6 +5,7 @@ export default defineCommand({
     description: "Bots response time to fluxer",
     category: "Misc",
     aliases: ["pong"],
+    cooldown: "5 seconds",
 
     async execute(client, message, args) {
         const start = Date.now()
