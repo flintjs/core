@@ -1,6 +1,7 @@
 import { importFile, isClass, scanFolder } from "../utils/fileUtils"
 import { FlintClient } from "../client/FlintClient"
 import type { ILogger } from "../types/ILogger"
+import { setLogger } from "../utils/logger"
 
 export interface BaseHandlerOptions {
     directory: string
@@ -27,6 +28,7 @@ export abstract class BaseHandler<T extends { name: string }> {
 
     useLogger(logger: ILogger): this {
         this.#logger = logger
+        setLogger(logger)
         return this
     }
 
@@ -46,18 +48,18 @@ export abstract class BaseHandler<T extends { name: string }> {
                 }
 
                 if (!("name" in data)) {
-                    console.warn(`[Flint] File ${file} is missing the "name" property.`)
+                    this.#logger?.warn(`File ${file} is missing the "name" property.`)
                     continue
                 }
 
                 if (!("execute" in data)) {
-                    console.warn(`[Flint] File ${file} is missing the "execute" property.`)
+                    this.#logger?.warn(`File ${file} is missing the "execute" property.`)
                     continue
                 }
 
                 this.store.set(data.name, data)
             } catch (error) {
-                console.error(`[Flint] Failed to load ${file}`, error)
+                this.#logger?.error(`Failed to load ${file}`, error)
             }
         }
 
