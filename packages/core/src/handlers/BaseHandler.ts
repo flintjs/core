@@ -1,35 +1,75 @@
-import path from "node:path"
-import url from "node:url"
-import fs from "node:fs"
+import { importFile, isClass, scanFolder } from "../utils/fileUtils"
+import { FlintClient } from "../client/FlintClient"
+import type { ILogger } from "../types/ILogger"
 
-export async function importFile(filePath: string) {
-    const resolved = path.resolve(filePath)
-    const fileUrl = url.pathToFileURL(resolved).href
-    const imported = await import(fileUrl)
-
-    return imported.default ?? imported
+export interface BaseHandlerOptions {
+    directory: string
+    recursive?: boolean
 }
 
-export function isFile(filePath: string) {
-    const stat = fs.statSync(filePath)
-    return stat.isFile()
-}
+export abstract class BaseHandler<T extends { name: string }> {
 
-export function isDirectory(filePath: string) {
-    const stat = fs.statSync(filePath)
-    return stat.isDirectory()
-}
+    protected client: FlintClient
+    protected directory: string
+    protected recursive: boolean
+    protected store: Map<string, T> = new Map()
 
-export function scanFolder(folderPath: string, recursive = true): string[] {
-    const entries = fs
-        .readdirSync(folderPath, { withFileTypes: true })
-        .map(entry => path.join(folderPath, entry.name))
-    let files: string[] = []
+    #logger?: ILogger
 
-    for (const entry of entries) {
-        if (isFile(entry) && entry.endsWith(".ts")) files.push(entry)
-        else if (isDirectory(entry) && recursive) files = files.concat(scanFolder(entry, recursive))
+    constructor(client: FlintClient, options: BaseHandlerOptions & { builtins?: T[] }) {
+        this.client = client
+        this.directory = options.directory
+        this.recursive = options.recursive ?? true
+        for (const builtin of options.builtins ?? []) {
+            this.store.set(builtin.name, builtin)
+        }
     }
 
-    return files
+    useLogger(logger: ILogger): this {
+        this.#logger = logger
+        return this
+    }
+
+    async loadAll(): Promise<this> {
+        if (!this.directory) return this
+
+        const files = scanFolder(this.directory, this.recursive)
+
+        for (const file of files) {
+            try {
+                const imported = await importFile(file)
+
+                let data = imported
+
+                if (isClass(imported)) {
+                    data = new imported()
+                }
+
+                if (!("name" in data)) {
+                    console.warn(`[Flint] File ${file} is missing the "name" property.`)
+                    continue
+                }
+
+                if (!("execute" in data)) {
+                    console.warn(`[Flint] File ${file} is missing the "execute" property.`)
+                    continue
+                }
+
+                this.store.set(data.name, data)
+            } catch (error) {
+                console.error(`[Flint] Failed to load ${file}`, error)
+            }
+        }
+
+        return this
+    }
+
+    get(name: string): T | undefined {
+        return this.store.get(name)
+    }
+
+    getAll(): T[] {
+        return Array.from(this.store.values())
+    }
+
 }

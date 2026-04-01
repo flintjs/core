@@ -1,38 +1,44 @@
 import { buildContext, buildInhibitorContext } from "./CommandContext"
-import { defineEvent } from "../factories/event"
+import { BaseListener } from "../structures/BaseListener"
+import { FlintClient } from "../client/FlintClient"
+import { Events, Message } from "@fluxerjs/core"
+import { FlintClientListeners } from "../types"
 import { parseMessage } from "./CommandParser"
-import { FlintClientEvents } from "../types"
-import { Events } from "@fluxerjs/core"
 
-export default defineEvent({
-    event: Events.MessageCreate,
-    name: "_flint:commandExecute",
-    priority: 0,
+export class CommandExecutor extends BaseListener {
+
+    constructor() {
+        super({
+            event: Events.MessageCreate,
+            name: "_flint:commandExecute",
+            priority: 0
+        })
+    }
 
     getMentionRegex(id: string) {
         return new RegExp(`^<@!?${id}>(\s+)?`)
-    },
+    }
 
-    async execute(client, message) {
-        await client.monitors.run(client, message)
+    async execute(client: FlintClient, message: Message) {
+        await client.monitorHandler?.run(client, message)
 
         const allPrefixes = [
-            client.prefix,
-            ...client.flintCommands.getAllCommands().flatMap((c) => c.prefixes ?? []),
+            ...(client.commandHandler?.prefix ? [client.commandHandler?.prefix] : []),
+            ...(client.commandHandler?.getAll() ?? []).flatMap((c) => c.prefixes ?? []),
         ]
 
         const parsed = parseMessage(
             message.content,
             allPrefixes,
-            client.mentionPrefix ?? false,
+            client.commandHandler?.mentionPrefix ?? false,
             client.user!.id
         )
 
         if (!parsed) return
 
-        const command = client.flintCommands.getCommand(parsed.commandName) ?? client.flintCommands.getCommandByAlias(parsed.commandName)
+        const command = client.commandHandler?.get(parsed.commandName) ?? client.commandHandler?.getCommandByAlias(parsed.commandName)
         if (!command) {
-            client.emit(FlintClientEvents.CommandNotFound, {
+            client.emit(FlintClientListeners.CommandNotFound, {
                 prefix: parsed.prefix,
                 name: parsed.commandName,
                 message
@@ -41,31 +47,31 @@ export default defineEvent({
         }
 
         const validPrefixes = [
-            client.prefix,
+            ...(client.commandHandler?.prefix ? [client.commandHandler?.prefix] : []),
             ...(command.prefixes?.length ? command.prefixes : [])
         ]
 
         if (
             !validPrefixes.includes(parsed.prefix) &&
-            (client.mentionPrefix && !this.getMentionRegex(client.user!.id).exec(parsed.prefix))
+            (client.commandHandler?.mentionPrefix && !this.getMentionRegex(client.user!.id).exec(parsed.prefix))
         ) return
 
         const ctx = buildInhibitorContext(client, message, parsed, command)
-        const result = await client.inhibitors.run(command, ctx)
-        if (!result.ok) {
-            client.emit(FlintClientEvents.CommandDenied, { result, ctx: ctx })
+        const result = await client.inhibitorHandler?.run(command, ctx)
+        if (result && !result.ok) {
+            client.emit(FlintClientListeners.CommandDenied, { result, ctx: ctx })
             return
         }
 
-        const commandCtx = buildContext(client, message, parsed, command)
         try {
+            const commandCtx = buildContext(client, message, parsed, command)
             await command.execute(...commandCtx)
-            client.emit(FlintClientEvents.CommandSuccess, { ctx: commandCtx })
-            await client.finalizers.run(client, ctx)
+            client.emit(FlintClientListeners.CommandSuccess, { ctx })
+            // await client.finalizerHandler?.run(client, ctx)
         } catch (error) {
-            client.emit(FlintClientEvents.CommandError, { ctx, error })
+            client.emit(FlintClientListeners.CommandError, { ctx, error })
         }
 
     }
 
-})
+}

@@ -23,13 +23,22 @@ importers:
       '@flint.js/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@flint.js/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
       '@fluxerjs/core':
         specifier: ^1.2.4
         version: 1.2.4
       dotenv:
         specifier: ^17.3.1
         version: 17.3.1
+      ms:
+        specifier: ^2.1.3
+        version: 2.1.3
     devDependencies:
+      '@types/ms':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@types/node':
         specifier: ^25.5.0
         version: 25.5.0
@@ -61,6 +70,8 @@ importers:
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
+
+  packages/logger: {}
 
 packages:
 

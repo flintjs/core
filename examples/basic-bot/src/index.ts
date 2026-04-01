@@ -1,28 +1,84 @@
-import { FlintClient, StatusType } from "@flint.js/core"
-import { config } from "./config"
+import {
+    Antilink,
+    BotPermissions,
+    ChannelType,
+    CommandHandler,
+    Disabled,
+    FlintClient,
+    FlintClientOptions,
+    InhibitorHandler,
+    ListenerHandler,
+    MonitorHandler,
+    StatusType,
+    UserPermissions
+} from "@flint.js/core"
+import { Logger } from "@flint.js/logger"
 
+import { config } from "./config"
 import "dotenv/config"
 
-export const client = new FlintClient({
-    intents: 0,
-    presence: {
-        custom_status: {
-            text: "@flint.js/core !!"
-        },
-        status: StatusType.ONLINE
-    },
-    prefix: config.prefix,
-    mentionPrefix: true,
-    handlers: {
-        commands: {
-            paths: ["./src/commands"],
-            recursive: true
-        },
-        events: {
-            paths: ["./src/events"],
-            recursive: true
-        }
-    }
-})
+export class ExampleBotClient extends FlintClient {
 
-client.login(process.env.TOKEN as string)
+    constructor(options: FlintClientOptions = {}) {
+        super({
+            ...options,
+            intents: 0,
+            presence: {
+                custom_status: {
+                    text: "@flint.js/core !!"
+                },
+                status: StatusType.ONLINE
+            }
+        })
+
+        this.logger = new Logger({
+            prefix: "Bot",
+            debug: true,
+            timestamp: true
+        })
+
+        this.commandHandler = new CommandHandler(this, {
+            directory: "./src/commands",
+            prefix: config.prefix,
+            mentionPrefix: true
+        })
+
+        this.listenerHandler = new ListenerHandler(this, {
+            directory: "./src/listeners"
+        })
+
+        this.inhibitorHandler = new InhibitorHandler(this, {
+            directory: "./src/inhibitors",
+            builtins: [
+                new Disabled(),
+                new ChannelType(),
+                new UserPermissions(),
+                new BotPermissions()
+            ]
+        })
+
+        this.monitorHandler = new MonitorHandler(this, {
+            directory: "./src/monitors",
+            builtins: [
+                new Antilink()
+            ]
+        })
+
+        this.commandHandler
+            .useLogger(this.logger)
+            .useInhibitorHandler(this.inhibitorHandler)
+            .useListenerHandler(this.listenerHandler)
+
+    }
+
+    public override async login(token: string) {
+        await this.inhibitorHandler.loadAll()
+        await this.listenerHandler.loadAll()
+        await this.commandHandler.loadAll()
+        return super.login(token)
+    }
+
+}
+
+const client = new ExampleBotClient()
+await client.login(process.env.TOKEN as string)

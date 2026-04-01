@@ -1,55 +1,55 @@
-import { default as commandExecutor } from "../executor/CommandExecutor"
-import type { HandlerLoadResult, FlintClientOptions } from "../types"
-import { InhibitorStore } from "../inhibitors/InhibitorStore"
-import { FinalizerStore } from "../finalizers/FinalizerStore"
+import { InhibitorHandler } from "../handlers/InhibitorHandler"
+import { ListenerHandler } from "../handlers/ListenerHandler"
+import { CommandExecutor } from "../executor/CommandExecutor"
 import { CommandHandler } from "../handlers/CommandHandler"
-import { EventHandler } from "../handlers/EventHandler"
-import { MonitorStore } from "../monitors/MonitorStore"
+import { MonitorHandler } from "../handlers/MonitorHandler"
+import type { FlintClientOptions } from "../types"
+import { setLogger } from "../utils/logger"
+import { ILogger } from "../types/ILogger"
 import { Client } from "@fluxerjs/core"
 
 export class FlintClient extends Client {
-    public readonly flintCommands: CommandHandler
-    public readonly flintEvents: EventHandler
-    public readonly inhibitors: InhibitorStore
-    public readonly finalizers: FinalizerStore
-    public readonly monitors: MonitorStore
 
-    public readonly prefix?: string
-    public readonly mentionPrefix?: boolean
+    #commandHandler?: CommandHandler
+    #listenerHandler?: ListenerHandler
+    #inhibitorHandler?: InhibitorHandler
+    #monitorHandler?: MonitorHandler
+    #internalListenerHandler: ListenerHandler
+    #logger?: ILogger
 
-    #options: FlintClientOptions
     #started = false
 
     public constructor(public readonly options: FlintClientOptions = {}) {
         super()
-        this.#options = options
+        this.#internalListenerHandler = new ListenerHandler(this, {
+            directory: "",
+            builtins: [new CommandExecutor()]
+        })
+    }
 
-        this.flintCommands = new CommandHandler(this, this.#options.handlers?.commands)
-        this.flintEvents = new EventHandler(this, this.#options.handlers?.events)
-        this.inhibitors = new InhibitorStore()
-        this.finalizers = new FinalizerStore()
-        this.monitors = new MonitorStore()
+    useLogger(logger: ILogger): this {
+        this.#logger = logger
+        setLogger(logger)
+        return this
+    }
 
-        this.prefix = this.#options.prefix
-        this.mentionPrefix = this.#options.mentionPrefix
+    get logger(): ILogger {
+        if (!this.#logger) throw new Error("[Flint] Logger not registered")
+        return this.#logger
+    }
+
+    set logger(logger: ILogger) {
+        this.#logger = logger
+        setLogger(logger)
     }
 
     public override async login(token: string): Promise<string> {
         if (this.#started) {
-            throw new Error("[Flint] .start() has already been called")
+            throw new Error("[Flint] .login() has already been called")
         }
         this.#started = true
 
-        const [commandResult, eventResult] = await Promise.all([
-            this.flintCommands.loadAll(),
-            this.flintEvents.loadAll()
-        ])
-
-        this.flintEvents.registerInternal(commandExecutor)
-
-        this.#logLoadResult("commands", commandResult)
-        this.#logLoadResult("events", eventResult)
-
+        await this.#internalListenerHandler.loadAll()
         return await super.login(token)
     }
 
@@ -57,13 +57,40 @@ export class FlintClient extends Client {
         await super.destroy()
     }
 
-    #logLoadResult(kind: string, result: HandlerLoadResult): void {
-        if (result.loaded.length) {
-            console.log(`[Flint] Loaded ${result.loaded.length} ${kind}`)
-        }
-
-        for (const { path, error } of result.failed) {
-            console.error(`[Flint] Failed to load ${kind} from ${path}`, error)
-        }
+    get commandHandler(): CommandHandler {
+        if (!this.#commandHandler) throw new Error("[Flint] CommandHandler not registered")
+        return this.#commandHandler
     }
+
+    set commandHandler(handler: CommandHandler) {
+        this.#commandHandler = handler
+    }
+
+    get listenerHandler(): ListenerHandler {
+        if (!this.#listenerHandler) throw new Error("[Flint] ListenerHandler not registered")
+        return this.#listenerHandler
+    }
+
+    set listenerHandler(handler: ListenerHandler) {
+        this.#listenerHandler = handler
+    }
+
+    get inhibitorHandler(): InhibitorHandler {
+        if (!this.#inhibitorHandler) throw new Error("[Flint] InhibitorHandler not registered")
+        return this.#inhibitorHandler
+    }
+
+    set inhibitorHandler(handler: InhibitorHandler) {
+        this.#inhibitorHandler = handler
+    }
+
+    get monitorHandler(): MonitorHandler {
+        if (!this.#monitorHandler) throw new Error("[Flint] MonitorHandler not registered")
+        return this.#monitorHandler
+    }
+
+    set monitorHandler(handler: MonitorHandler) {
+        this.#monitorHandler = handler
+    }
+
 }

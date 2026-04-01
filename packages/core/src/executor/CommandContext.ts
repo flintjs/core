@@ -1,6 +1,6 @@
 import type { ParseResult } from "../executor/CommandParser"
+import type { BaseCommand } from "../structures/BaseCommand"
 import type { FlintClient } from "../client/FlintClient"
-import type { FlintCommand } from "../factories/command"
 import type { Message } from "@fluxerjs/core"
 
 export interface CommandContext {
@@ -13,10 +13,10 @@ export interface CommandContext {
 export interface CommandMeta {
     prefix: string
     usedAlias: string | null
-    command: FlintCommand
+    command: BaseCommand
 }
 
-export function buildContext(client: FlintClient, message: Message, parsed: ParseResult, command: FlintCommand): [client: FlintClient, message: Message, args: string[], meta: CommandMeta] {
+export function buildContext(client: FlintClient, message: Message, parsed: ParseResult, command: BaseCommand): [client: FlintClient, message: Message, args: string[], meta: CommandMeta] {
     const meta: CommandMeta = {
         prefix: parsed.prefix,
         usedAlias: parsed.commandName !== command.name ? parsed.commandName : null,
@@ -34,7 +34,7 @@ export function buildInhibitorContext(
     client: FlintClient,
     message: Message,
     parsed: ParseResult,
-    command: FlintCommand
+    command: BaseCommand
 ): CommandContext {
     const [c, m, args, meta] = buildContext(client, message, parsed, command)
     return { client: c, message: m, args, meta }

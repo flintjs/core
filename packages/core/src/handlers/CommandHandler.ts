@@ -1,58 +1,63 @@
-import type { HandlerOptions, HandlerLoadResult } from "../types"
-import type { FlintClient } from "../client/FlintClient"
-import { importFile, scanFolder } from "./BaseHandler"
+import { BaseHandler, BaseHandlerOptions } from "./BaseHandler"
+import { BaseCommand } from "../structures/BaseCommand"
+import { InhibitorHandler } from "./InhibitorHandler"
+import { FlintClient } from "../client/FlintClient"
+import { ListenerHandler } from "./ListenerHandler"
+import { MonitorHandler } from "./MonitorHandler"
 
-export class CommandHandler {
+export interface CommandHandlerOptions extends BaseHandlerOptions {
+    prefix: string
+    mentionPrefix?: boolean
+}
 
-    private client: FlintClient
-    private options?: HandlerOptions
-    private flintCommands = new Map<string, any>()
+export class CommandHandler extends BaseHandler<BaseCommand> {
 
-    constructor(client: FlintClient, options?: HandlerOptions) {
-        this.client = client
-        this.options = options
+    prefix: string
+    mentionPrefix: boolean
+
+    #inhibitorHandler?: InhibitorHandler
+    #listenerHandler?: ListenerHandler
+    #monitorHandler?: MonitorHandler
+
+    constructor(client: FlintClient, options: CommandHandlerOptions) {
+        super(client, options)
+        this.prefix = options?.prefix
+        this.mentionPrefix = options.mentionPrefix ?? false
     }
 
-    public async loadAll(): Promise<HandlerLoadResult> {
-
-        const loaded: string[] = []
-        const failed: HandlerLoadResult["failed"] = []
-
-        if (!this.options?.paths?.length) return { loaded, failed }
-
-        for (const folder of this.options.paths) {
-            const files = scanFolder(folder, this.options.recursive)
-            for (const file of files) {
-                try {
-                    const command = await importFile(file)
-                    if (!command?.execute || !command.name) {
-                        throw new Error("Invalid command format")
-                    }
-
-                    this.flintCommands.set(command.name, command)
-
-                    loaded.push(file)
-                } catch (error) {
-                    failed.push({ path: file, error: error as Error })
-                }
-            }
-        }
-
-        return { loaded, failed }
-
+    getCommand(name: string): BaseCommand | undefined {
+        return this.get(name)
     }
 
-    public getCommand(name: string) {
-        return this.flintCommands.get(name)
+    getCommandByAlias(alias: string): BaseCommand | undefined {
+        return Array.from(this.store.values()).find((c) => c.aliases?.includes(alias)) ?? undefined
     }
 
-    public getCommandByAlias(name: string) {
-        const commands = Array.from(this.flintCommands.values())
-        return commands.find((c) => c.aliases?.includes(name))
+    useInhibitorHandler(handler: InhibitorHandler): this {
+        this.#inhibitorHandler = handler
+        return this
     }
 
-    public getAllCommands() {
-        return Array.from(this.flintCommands.values())
+    useMonitorHandler(handler: MonitorHandler): this {
+        this.#monitorHandler = handler
+        return this
+    }
+
+    useListenerHandler(handler: ListenerHandler): this {
+        this.#listenerHandler = handler
+        return this
+    }
+
+    getInhibitorHandler(): InhibitorHandler | undefined {
+        return this.#inhibitorHandler
+    }
+
+    getListenerHandler(): ListenerHandler | undefined {
+        return this.#listenerHandler
+    }
+
+    getMonitorHandler(): MonitorHandler | undefined {
+        return this.#monitorHandler
     }
 
 }

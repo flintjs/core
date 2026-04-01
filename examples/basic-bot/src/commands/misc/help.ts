@@ -1,4 +1,5 @@
-import { defineCommand, type FlintClient } from "@flint.js/core"
+import { defineCommand } from "@flint.js/core"
+import { ExampleBotClient } from "../../"
 
 export default defineCommand({
     name: "help",
@@ -11,9 +12,9 @@ export default defineCommand({
         return `\`\`\`\n${content}\n\`\`\``
     },
 
-    formatCommands(client: FlintClient) {
-        return client.flintCommands
-            .getAllCommands()
+    formatCommands(client: ExampleBotClient) {
+        return client.commandHandler
+            .getAll()
             .map((c) => `${c.name} - ${c.description}`).join("\n")
     },
 
@@ -21,7 +22,7 @@ export default defineCommand({
         const commandName = args[0]?.toLowerCase()
 
         if (commandName) {
-            const command = client.flintCommands.getCommand(commandName)
+            const command = client.commandHandler.getCommand(commandName)
             if (!command) {
                 return message.reply("That command was not found")
             }
