@@ -18,9 +18,7 @@ export class SpamFilter extends BaseMonitor {
     #warnings: Set<string>
 
     constructor(options: SpamFilterOptions = {}) {
-        super({
-            name: "spamfilter"
-        })
+        super("SpamFilter", {})
 
         this.#options = {
             threshold: options.threshold ?? 5,

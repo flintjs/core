@@ -5,9 +5,7 @@ import type { BaseCommand } from "../../BaseCommand"
 export class Disabled extends BaseInhibitor {
 
     constructor() {
-        super({
-            name: "disabled"
-        })
+        super("disabled", {})
     }
 
     run(command: BaseCommand, _ctx: CommandContext) {

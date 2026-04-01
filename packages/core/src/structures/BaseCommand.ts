@@ -4,8 +4,7 @@ import { FlintClient } from "../client/FlintClient"
 import { Awaitable } from "../types"
 import { StringValue } from "ms"
 
-interface BaseCommandOptions {
-    name: string
+export interface BaseCommandOptions {
     description: string
     category?: string
     aliases?: string[]
@@ -28,8 +27,8 @@ export abstract class BaseCommand {
     public readonly disabled?: boolean
     public readonly prefixes?: string[]
 
-    constructor(options: BaseCommandOptions) {
-        this.name = options.name
+    constructor(name: string, options: BaseCommandOptions) {
+        this.name = name
         this.description = options.description
         this.category = options.category ?? "Uncategorized"
         this.aliases = options.aliases ?? []

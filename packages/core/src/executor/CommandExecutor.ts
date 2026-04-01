@@ -8,10 +8,9 @@ import { parseMessage } from "./CommandParser"
 export class CommandExecutor extends BaseListener {
 
     constructor() {
-        super({
+        super("_flinternal:commandExecute", {
             event: Events.MessageCreate,
-            name: "_flint:commandExecute",
-            priority: 0
+            priority: 100
         })
     }
 

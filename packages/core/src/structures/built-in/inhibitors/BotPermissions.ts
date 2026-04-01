@@ -6,9 +6,7 @@ import { PermissionsBitField } from "@fluxerjs/core"
 export class BotPermissions extends BaseInhibitor {
 
     constructor() {
-        super({
-            name: "bot.permissions"
-        })
+        super("bot.permissions", {})
     }
 
     async run(command: BaseCommand, ctx: CommandContext) {

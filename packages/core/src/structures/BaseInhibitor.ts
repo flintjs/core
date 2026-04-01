@@ -23,15 +23,13 @@ export const err = <R extends FailureReason>(
     extra?: InhibitorExtra<R>
 ): InhibitorResult => ({ ok: false, reason, ...extra } as InhibitorResult)
 
-export interface BaseInhibitorOptions {
-    name: string
-}
+export interface BaseInhibitorOptions {}
 
 export abstract class BaseInhibitor {
     public readonly name: string
 
-    constructor(options: BaseInhibitorOptions) {
-        this.name = options.name
+    constructor(name: string, options: BaseInhibitorOptions) {
+        this.name = name
     }
 
     abstract run(command: BaseCommand, ctx: CommandContext): Awaitable<InhibitorResult>

@@ -20,9 +20,7 @@ export class Antilink extends BaseMonitor {
     #regex: RegExp
 
     constructor(options: AntilinkOptions = {}) {
-        super({
-            name: "antilink"
-        })
+        super("Antilink", {})
 
         this.#options = {
             action: options.action ?? "both",

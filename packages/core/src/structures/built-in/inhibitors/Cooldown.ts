@@ -6,9 +6,7 @@ import ms from "ms"
 export class Cooldown extends BaseInhibitor {
 
     constructor() {
-        super({
-            name: "cooldown"
-        })
+        super("cooldown", {})
     }
 
     #cooldowns = new Map<string, number>()

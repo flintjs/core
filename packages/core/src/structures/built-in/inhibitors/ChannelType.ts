@@ -5,9 +5,7 @@ import type { BaseCommand } from "../../BaseCommand"
 export class ChannelType extends BaseInhibitor {
 
     constructor() {
-        super({
-            name: "channel"
-        })
+        super("channel", {})
     }
 
     run(command: BaseCommand, _ctx: CommandContext) {
