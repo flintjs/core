@@ -1,4 +1,5 @@
 import { defineCommand } from "@flint.js/core"
+import ms from "ms"
 
 export default defineCommand({
     name: "ping",
@@ -12,7 +13,7 @@ export default defineCommand({
         const replyMsg = await message.reply("Pinging...")
         const latency = Date.now() - start
         await replyMsg.edit({
-            content: `Pong! Latency: ${latency}ms`
+            content: `🏓 ${ms(latency, { long: true })}`
         })
     }
 
