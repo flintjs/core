@@ -26,10 +26,10 @@ export type { CommandHandlerOptions } from "./handlers/CommandHandler"
 export type { BaseHandlerOptions } from "./handlers/BaseHandler"
 
 // structures
-export { BaseCommand } from "./structures/BaseCommand"
-export { BaseListener } from "./structures/BaseListener"
-export { BaseInhibitor } from "./structures/BaseInhibitor"
-export { BaseMonitor } from "./structures/BaseMonitor"
+export { BaseCommand as Command } from "./structures/BaseCommand"
+export { BaseListener as Listener } from "./structures/BaseListener"
+export { BaseInhibitor as Inhibitor } from "./structures/BaseInhibitor"
+export { BaseMonitor as Monitor } from "./structures/BaseMonitor"
 export { ok, err } from "./structures/BaseInhibitor"
 export type { InhibitorResult, InhibitorType } from "./structures/BaseInhibitor"
 
