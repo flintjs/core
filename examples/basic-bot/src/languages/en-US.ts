@@ -14,6 +14,8 @@ export default class enUS extends Language {
             INHIBITOR_DISABLED_EMBED_FIELD_TITLE: "This command is currently disabled",
             INHIBITOR_COOLDOWN_EMBED_TITLE: "Disabled",
             INHIBITOR_COOLDOWN_EMBED_DESCRIPTION: "⏱️ You can run this command again in `{remaining}`",
+            INHIBITOR_OWNER_ONLY_EMBED_TITLE: "Owner only",
+            INHIBITOR_OWNER_ONLY_EMBED_DESCRIPTION: "This command is restricted to owners only",
             PINGING: "Pinging...",
         }
     }

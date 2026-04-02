@@ -12,6 +12,12 @@ export default defineListener({
         let embed = {}
 
         switch (result.reason) {
+            case "ownerOnly":
+                embed = {
+                    title: client.i18n.t("INHIBITOR_OWNER_ONLY_EMBED_TITLE"),
+                    description: client.i18n.t("INHIBITOR_OWNER_ONLY_EMBED_DESCRIPTION")
+                }
+            break
             case "user.permissions":
                 embed = {
                     title: client.i18n.t("INHIBITOR_PERMISSIONS_EMBED_TITLE"),

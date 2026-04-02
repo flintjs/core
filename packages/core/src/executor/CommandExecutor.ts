@@ -64,7 +64,7 @@ export class CommandExecutor extends BaseListener {
         }
         const internalResult = await client[kInhibitors].run(command, ctx)
         if (internalResult && !internalResult.ok) {
-            client.emit(FlintClientListeners.CommandDenied, { result, ctx })
+            client.emit(FlintClientListeners.CommandDenied, { result: internalResult, ctx })
             return
         }
 

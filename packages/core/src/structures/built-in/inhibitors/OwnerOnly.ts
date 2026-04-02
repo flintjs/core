@@ -17,9 +17,8 @@ export class OwnerOnly extends BaseInhibitor {
             log("warn", `Failed ${command.name} due to 'owners' client option empty or missing.`)
             return err("ownerOnly")
         }
-        if (!_ctx.client.owners.includes(_ctx.message.author.id)) return err("ownerOnly")
 
-        return ok()
+        return _ctx.client.owners.includes(_ctx.message.author.id) ? ok() : err("ownerOnly")
 
     }
 
