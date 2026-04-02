@@ -6,6 +6,11 @@ description: The monitors that ship with Flint and how to use them.
 ## Overview
 
 Flint ships with two built-in monitors that cover the most common use cases. They are not enabled by default, you opt in by passing them as `builtins` to your `MonitorHandler`.
+
+## Monitors
+
+The following monitors are built-in to `@flint.js/core`
+
 ```ts
 import {
     MonitorHandler,
@@ -32,7 +37,7 @@ this.monitorHandler = new MonitorHandler(this, {
 })
 ```
 
-## SpamFilter
+### SpamFilter
 
 Deletes a users message if they exceed the spam filter threshold within the given interval time.
 
@@ -46,7 +51,7 @@ SpamFilter Options:
 | `message` | `string` | `"Please slow down."` | The message to send the user when triggering the monitor |
 
 
-## Antilink
+### Antilink
 
 Deletes a users message if it contains a fluxer invite/oauth2 url
 

@@ -5,72 +5,30 @@ description: The inhibitors that ship with Flint and how to use them.
 
 ## Overview
 
-Flint ships with five built-in inhibitors that cover the most common use cases. They are not enabled by default, you opt in by passing them as `builtins` to your `InhibitorHandler`.
+Flint currently ships with three built-in inhibitors that cover some common use cases. They are not enabled by default, you opt in by passing them as `builtins` to your `InhibitorHandler`.
 ```ts
 import {
     InhibitorHandler,
-    Disabled,
-    ChannelType,
-    UserPermissions,
-    BotPermissions,
-    Cooldown
+    ChannelTypeInhibitor,
+    UserPermissionsInhibitor,
+    BotPermissionsInhibitor,
 } from "@flint.js/core"
 
 this.inhibitorHandler = new InhibitorHandler(this, {
     directory: "./src/inhibitors",
     builtins: [
-        new Disabled(),
-        new Cooldown(),
-        new ChannelType(),
-        new UserPermissions(),
-        new BotPermissions()
+        new ChannelTypeInhibitor()
+        new UserPermissionsInhibitor()
+        new BotPermissionsInhibitor()
     ]
 })
 ```
 
-## Disabled
+## Inhibitors
 
-Blocks a command from running if its `disabled` property is set to `true`.
-```ts
-export default defineCommand({
-    name: "ping",
-    description: "Pong!",
-    disabled: true,
+The following inhibitors are built-in to `@flint.js/core`
 
-    async execute(client, message) {
-        await message.reply("Pong!")
-    }
-})
-```
-
-When blocked, the `CommandDenied` event is emitted with `reason: "disabled"`.
-
-## Cooldown
-
-Blocks a command from running if it has a `cooldown` property set and the cooldown is still active when a user runs the command again.
-```ts
-export default defineCommand({
-    name: "ping",
-    description: "Pong!",
-    cooldown: 5000,
-
-    async execute(client, message) {
-        // only runs if the command is not on cooldown for the user who executed the command
-    }
-})
-```
-
-When blocked, the `CommandDenied` event is emitted with `reason: "cooldown"` and `remaining` and `cooldown` properties of the remaining length of the cooldown:
-
-```ts
-{
-    reason: "cooldown",
-    remaining: 2040,
-    formatted: "2 seconds"
-}
-```
-
-## ChannelType
+### ChannelType
 
 Blocks a command from running if it is used outside of its `allowedChannels` list. If `allowedChannels` is empty or not set, the command is allowed in all channels.
 ```ts
@@ -87,7 +45,7 @@ export default defineCommand({
 
 When blocked, the `CommandDenied` event is emitted with `reason: "channel"`.
 
-## UserPermissions
+### UserPermissions
 
 Blocks a command from running if the user is missing any of the required permissions defined in the command's `permissions` array.
 ```ts
@@ -106,7 +64,7 @@ export default defineCommand({
 
 When blocked, the `CommandDenied` event is emitted with `reason: "user.permissions"` and a `missing` array of the permissions the user is lacking.
 
-## BotPermissions
+### BotPermissions
 
 Works the same as `UserPermissions` but checks the bot's own permissions instead of the user's.
 ```ts
@@ -135,9 +93,7 @@ Each built-in inhibitor emits a specific reason when it blocks a command. Use th
 
 | Inhibitor | Reason | Extra fields |
 |---|---|---|
-| `Disabled` | `"disabled"` | None |
 | `ChannelType` | `"channel"` | None |
-| `Cooldown` | `"cooldown"` | `remaining: number`, `formatted: string` |
 | `UserPermissions` | `"user.permissions"` | `missing: PermissionResolvable[]` |
 | `BotPermissions` | `"bot.permissions"` | `missing: PermissionResolvable[]` |
 

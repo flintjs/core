@@ -1,3 +1,4 @@
 export const config = {
-    prefix: "!"
+    prefix: "!",
+    owners: ["...", "..."]
 }

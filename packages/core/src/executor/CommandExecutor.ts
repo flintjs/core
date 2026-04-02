@@ -1,6 +1,7 @@
 import { buildContext, buildInhibitorContext } from "./CommandContext"
 import { BaseListener } from "../structures/BaseListener"
 import { FlintClient } from "../client/FlintClient"
+import { kInhibitors } from "../internal/symbols"
 import { Events, Message } from "@fluxerjs/core"
 import { FlintClientListeners } from "../types"
 import { parseMessage } from "./CommandParser"
@@ -58,7 +59,12 @@ export class CommandExecutor extends BaseListener {
         const ctx = buildInhibitorContext(client, message, parsed, command)
         const result = await client.inhibitorHandler?.run(command, ctx)
         if (result && !result.ok) {
-            client.emit(FlintClientListeners.CommandDenied, { result, ctx: ctx })
+            client.emit(FlintClientListeners.CommandDenied, { result, ctx })
+            return
+        }
+        const internalResult = await client[kInhibitors].run(command, ctx)
+        if (internalResult && !internalResult.ok) {
+            client.emit(FlintClientListeners.CommandDenied, { result, ctx })
             return
         }
 

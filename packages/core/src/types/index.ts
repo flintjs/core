@@ -91,8 +91,10 @@ export interface PresenceData {
 }
 
 export interface FlintClientOptions {
-    prefix?: string
-    mentionPrefix?: boolean
+    owners: string[]
+}
+
+export interface FluxerClientOptions {
     intents?: 0
     presence?: PresenceData
     waitForGuilds?: boolean

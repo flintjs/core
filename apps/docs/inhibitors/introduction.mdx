@@ -29,10 +29,9 @@ import {
     CommandHandler,
     ListenerHandler,
     InhibitorHandler,
-    Disabled,
-    ChannelType,
-    UserPermissions,
-    BotPermissions
+    ChannelTypeInhibitor,
+    UserPermissionsInhibitor,
+    BotPermissionsInhibitor
 } from "@flint.js/core"
 
 class MyClient extends FlintClient {
@@ -46,10 +45,9 @@ class MyClient extends FlintClient {
         this.inhibitorHandler = new InhibitorHandler(this, {
             directory: "./src/inhibitors",
             builtins: [
-                new Disabled(),
-                new ChannelType(),
-                new UserPermissions(),
-                new BotPermissions()
+                new ChannelTypeInhibitor(),
+                new UserPermissionsInhibitor(),
+                new BotPermissionsInhibitor()
             ]
         })
 
@@ -76,6 +74,86 @@ class MyClient extends FlintClient {
 }
 ```
 
+---
+
+# Internal inhibitors
+
+Some inhibitors are registered by default internally to ensure command execution works as intended with the provided command options. These are:
+
+### OwnerOnly
+
+Blocks a command from running if its `ownerOnly` property is set to `true` and `client.owners` doesn't include the id of the user executing the command.
+```ts
+export default defineCommand({
+    name: "ping",
+    description: "Pong!",
+    ownerOnly: true,
+
+    async execute(client, message) {
+        // only runs if the message author's ID is included in `client.owners`
+    }
+})
+```
+
+
+When blocked, the `result` parameter within the `CommandDenied` event will be:
+
+```ts
+{
+    reason: "ownerOnly"
+}
+```
+
+### Disabled
+
+Blocks a command from running if its `disabled` property is set to `true`.
+```ts
+export default defineCommand({
+    name: "ping",
+    description: "Pong!",
+    disabled: true,
+
+    async execute(client, message) {
+        // only runs if the command is not `disabled`
+    }
+})
+```
+
+When blocked, the `result` parameter within the `CommandDenied` event will be:
+
+```ts
+{
+    reason: "disabled"
+}
+```
+
+### Cooldown
+
+Blocks a command from running if it has a `cooldown` property set and the cooldown is still active when a user runs the command again.
+```ts
+export default defineCommand({
+    name: "ping",
+    description: "Pong!",
+    cooldown: 5000,
+
+    async execute(client, message) {
+        // only runs if the command is not on cooldown for the user who executed the command
+    }
+})
+```
+
+When blocked, the `result` parameter within the `CommandDenied` event will be:
+
+```ts
+{
+    reason: "cooldown",
+    remaining: 2040,
+    formatted: "2 seconds"
+}
+```
+
+---
+
 ## Handling denied commands
 
 When an inhibitor blocks a command, Flint emits a `CommandDenied` event with the result and context. Listen to this event to send feedback to the user:
@@ -90,6 +168,8 @@ export default defineListener({
         switch (result.reason) {
             case "disabled":
                 return ctx.message.reply("That command is currently disabled.")
+            case "ownerOnly":
+                return ctx.message.reply("This command is owner only.")
             case "channel":
                 return ctx.message.reply("That command cannot be used in this channel.")
             case "user.permissions":

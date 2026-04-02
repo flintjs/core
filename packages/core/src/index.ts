@@ -9,7 +9,8 @@ export {
     StatusType,
     Activity,
     CustomStatus,
-    FlintClientOptions
+    FlintClientOptions,
+    FluxerClientOptions
 } from "./types"
 export { ILogger } from "./types/ILogger"
 
@@ -41,10 +42,8 @@ export { Argument } from "./arguments/Argument"
 export type { ArgumentOptions, ArgumentMatch, ArgumentType } from "./arguments/Argument"
 
 // built-in inhibitors and monitors
-export { Disabled } from "./structures/built-in/inhibitors/Disabled"
-export { Cooldown } from "./structures/built-in/inhibitors/Cooldown"
-export { ChannelType } from "./structures/built-in/inhibitors/ChannelType"
-export { UserPermissions } from "./structures/built-in/inhibitors/UserPermissions"
-export { BotPermissions } from "./structures/built-in/inhibitors/BotPermissions"
-export { SpamFilter } from "./structures/built-in/monitors/SpamFilter"
-export { Antilink } from "./structures/built-in/monitors/Antilink"
+export { ChannelType as ChannelTypeInhibitor } from "./structures/built-in/inhibitors/ChannelType"
+export { UserPermissions as UserPermissionsInhibitor } from "./structures/built-in/inhibitors/UserPermissions"
+export { BotPermissions as BotPermissionsInhibitor } from "./structures/built-in/inhibitors/BotPermissions"
+export { SpamFilter as SpamFilterMonitor } from "./structures/built-in/monitors/SpamFilter"
+export { Antilink as AntilinkMonitor } from "./structures/built-in/monitors/Antilink"

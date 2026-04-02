@@ -93,6 +93,7 @@ args: [
 Matches a named value anywhere in the message:
 ```ts
 // message: !search dogs --limit 5
+// message: !search dogs --limit=5
 args: [
     { id: "query", type: "string" },
     { id: "limit", type: "integer", match: "option", flag: "--limit" } // 5
@@ -110,6 +111,18 @@ args: [
 ```
 
 When a default is provided, the argument type will reflect it and will no longer be nullable.
+
+## Multiple flags
+
+You can use multiple flags that do the same thing (think shorthand flags often used in the cli)
+```ts
+// message: !ban @member --force
+// message: !ban @member -f
+args: [
+    { id: "member", type: "member" },
+    { id: "force", match: "flag", flag: ["--force", "-f"] } // true
+] as const
+```
 
 ## Custom types
 

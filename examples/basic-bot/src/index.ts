@@ -1,17 +1,15 @@
 import {
-    Antilink,
-    BotPermissions,
-    ChannelType,
+    AntilinkMonitor,
+    BotPermissionsInhibitor,
+    ChannelTypeInhibitor,
+    UserPermissionsInhibitor,
     CommandHandler,
-    Disabled,
-    Cooldown,
     FlintClient,
-    FlintClientOptions,
     InhibitorHandler,
     ListenerHandler,
     MonitorHandler,
     StatusType,
-    UserPermissions
+    FluxerClientOptions
 } from "@flint.js/core"
 import { Logger } from "@flint.js/logger"
 import { LanguageHandler } from "@flint.js/i18n"
@@ -23,8 +21,10 @@ export class ExampleBotClient extends FlintClient {
 
     i18n: LanguageHandler
 
-    constructor(options: FlintClientOptions = {}) {
+    constructor(options: FluxerClientOptions = {}) {
         super({
+            owners: config.owners
+        }, {
             ...options,
             intents: 0,
             presence: {
@@ -54,18 +54,16 @@ export class ExampleBotClient extends FlintClient {
         this.inhibitorHandler = new InhibitorHandler(this, {
             directory: "./src/inhibitors",
             builtins: [
-                new Cooldown(),
-                new Disabled(),
-                new ChannelType(),
-                new UserPermissions(),
-                new BotPermissions()
+                new ChannelTypeInhibitor(),
+                new UserPermissionsInhibitor(),
+                new BotPermissionsInhibitor()
             ]
         })
 
         this.monitorHandler = new MonitorHandler(this, {
             directory: "./src/monitors",
             builtins: [
-                new Antilink()
+                new AntilinkMonitor()
             ]
         })
 

@@ -18,7 +18,9 @@ class MyClient extends FlintClient {
     listenerHandler: ListenerHandler
 
     constructor() {
-        super()
+        super({
+            owners: ["..."]
+        })
 
         this.listenerHandler = new ListenerHandler(this, {
             directory: "./src/listeners"
@@ -67,9 +69,15 @@ All handlers are optional. Only register the ones you need. Accessing an unregis
 
 ## Client options
 
-`FlintClient` accepts a `FlintClientOptions` object in its constructor, which is passed through to `@fluxerjs/core`'s `Client`:
+`FlintClient` accepts two objects in its constructor: `FlintClientOptions` and `FluxerClientOptions`.
+
+`FluxerClientOptions` is passed through to `@fluxerjs/core`'s `Client`, whereas `FlintClientOptions` are used internally:
 ```ts
 super({
+    // FlintClientOptions
+    owners: ["..."]
+}, {
+    // FluxerClientOptions
     intents: 0,
     presence: {
         status: StatusType.ONLINE,
@@ -88,7 +96,7 @@ import { Logger } from "@flint.js/logger"
 
 class MyClient extends FlintClient {
     constructor() {
-        super()
+        super({ owners: ["..."] })
         this.logger = new Logger({ prefix: "MyBot" })
         // ...
     }

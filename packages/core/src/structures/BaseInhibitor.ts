@@ -3,11 +3,11 @@ import type { PermissionResolvable } from "@fluxerjs/core"
 import type { BaseCommand } from "./BaseCommand"
 import type { Awaitable } from "../types"
 
-export type InhibitorType = "disabled" | "channel" | "user.permissions" | "bot.permissions" | "cooldown" | "unknown"
+export type InhibitorType = "ownerOnly" | "disabled" | "channel" | "user.permissions" | "bot.permissions" | "cooldown" | "unknown"
 
 export type InhibitorResult =
     | { ok: true }
-    | { ok: false; reason: "disabled" | "channel" | "unknown" }
+    | { ok: false; reason: "disabled" | "channel" | "unknown" | "ownerOnly" }
     | { ok: false; reason: "user.permissions"; missing?: PermissionResolvable[] }
     | { ok: false; reason: "bot.permissions"; missing?: PermissionResolvable[] }
     | { ok: false; reason: "cooldown"; remaining?: number; formatted?: string }

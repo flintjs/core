@@ -114,10 +114,14 @@ export default defineListener({
 
     async execute(client, { result, ctx }) {
         switch (result.reason) {
+            case "ownerOnly":
+                return ctx.message.reply("This command is owner only.")
             case "disabled":
                 return ctx.message.reply("That command is currently disabled.")
             case "channel":
                 return ctx.message.reply("That command cannot be used in this channel.")
+            case "bot.permissions":
+                return ctx.message.reply(`You are missing the following permissions: ${result.missing?.join(", ")}`)
             case "user.permissions":
                 return ctx.message.reply(`You are missing the following permissions: ${result.missing?.join(", ")}`)
             case "cooldown":
