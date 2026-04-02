@@ -11,8 +11,6 @@ export class OwnerOnly extends BaseInhibitor {
 
     run(command: BaseCommand, _ctx: CommandContext) {
 
-        console.log(command)
-
         if (!command.ownerOnly) return ok()
 
         if (!_ctx.client.owners?.length) {
