@@ -62,8 +62,15 @@ export class CommandExecutor extends BaseListener {
             return
         }
 
+        const parsedArgs = await client.commandHandler.getArgumentRunner().run(
+            client,
+            message,
+            parsed.args,
+            command.args ?? []
+        )
+
         try {
-            const commandCtx = buildContext(client, message, parsed, command)
+            const commandCtx = buildContext(client, message, parsed, parsedArgs, command)
             await command.execute(...commandCtx)
             client.emit(FlintClientListeners.CommandSuccess, { ctx })
             // await client.finalizerHandler?.run(client, ctx)

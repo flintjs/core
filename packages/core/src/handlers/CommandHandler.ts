@@ -1,4 +1,6 @@
 import { BaseHandler, BaseHandlerOptions } from "./BaseHandler"
+import { ArgumentRunner } from "../arguments/ArgumentRunner"
+import { TypeResolver } from "../arguments/TypeResolver"
 import { BaseCommand } from "../structures/BaseCommand"
 import { InhibitorHandler } from "./InhibitorHandler"
 import { FlintClient } from "../client/FlintClient"
@@ -15,6 +17,9 @@ export class CommandHandler extends BaseHandler<BaseCommand> {
     prefix: string
     mentionPrefix: boolean
 
+    resolver: TypeResolver
+
+    #argumentRunner: ArgumentRunner
     #inhibitorHandler?: InhibitorHandler
     #listenerHandler?: ListenerHandler
     #monitorHandler?: MonitorHandler
@@ -23,6 +28,8 @@ export class CommandHandler extends BaseHandler<BaseCommand> {
         super(client, options)
         this.prefix = options?.prefix
         this.mentionPrefix = options.mentionPrefix ?? false
+        this.resolver = new TypeResolver(client)
+        this.#argumentRunner = new ArgumentRunner(this.resolver)
     }
 
     getCommand(name: string): BaseCommand | undefined {
@@ -58,6 +65,10 @@ export class CommandHandler extends BaseHandler<BaseCommand> {
 
     getMonitorHandler(): MonitorHandler | undefined {
         return this.#monitorHandler
+    }
+
+    getArgumentRunner(): ArgumentRunner {
+        return this.#argumentRunner
     }
 
 }
