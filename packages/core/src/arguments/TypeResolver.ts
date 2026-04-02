@@ -50,6 +50,13 @@ export class TypeResolver {
             try { return new URL(phrase) } catch { return null }
         })
 
+        this.addType("command", (client, _, phrase) => {
+            if (!client || !client.commandHandler) return null
+
+            return client.commandHandler.getCommand(phrase) ??
+                client.commandHandler.getCommandByAlias(phrase)
+        })
+
         this.addType("user", async (client, _, phrase) => {
             if (!phrase) return null
 

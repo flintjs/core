@@ -10,6 +10,7 @@ export type ArgumentType =
     | "float"
     | "boolean"
     | "url"
+    | "command"
     | "user"
     | "member"
     | "role"
