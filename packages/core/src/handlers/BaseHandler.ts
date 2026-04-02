@@ -1,7 +1,7 @@
-import { importFile, isClass, scanFolder } from "../utils/fileUtils"
+import { importFile, scanFolder } from "../utils/fileUtils"
 import { FlintClient } from "../client/FlintClient"
+import { log, setLogger } from "../utils/logger"
 import type { ILogger } from "../types/ILogger"
-import { setLogger } from "../utils/logger"
 
 export interface BaseHandlerOptions {
     directory: string
@@ -39,27 +39,34 @@ export abstract class BaseHandler<T extends { name: string }> {
 
         for (const file of files) {
             try {
-                const imported = await importFile(file)
+                const { isClass, isLanguage, module } = await importFile(file)
 
-                let data = imported
+                let data = module
 
-                if (isClass(imported)) {
-                    data = new imported()
+                if (isClass) {
+                    data = new module()
+                }
+
+                if (isLanguage) {
+                    if (!("language" in data)) {
+                        log("warn", `File ${file} is missing the "languages" property.`)
+                        continue
+                    }
+                } else {
+                    if (!("execute" in data)) {
+                        log("warn", `File ${file} is missing the "execute" property.`)
+                        continue
+                    }
                 }
 
                 if (!("name" in data)) {
-                    this.#logger?.warn(`File ${file} is missing the "name" property.`)
-                    continue
-                }
-
-                if (!("execute" in data)) {
-                    this.#logger?.warn(`File ${file} is missing the "execute" property.`)
+                    log("warn", `File ${file} is missing the "name" property.`)
                     continue
                 }
 
                 this.store.set(data.name, data)
             } catch (error) {
-                this.#logger?.error(`Failed to load ${file}`, error)
+                log("error", `Failed to load ${file}`, error)
             }
         }
 
