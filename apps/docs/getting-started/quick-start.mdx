@@ -1,0 +1,133 @@
+---
+title: Quick Start
+description: Get a Flint bot up and running in minutes.
+---
+
+## Project structure
+
+A typical Flint project looks like this:
+<Tree>
+  <Tree.Folder name="commands" defaultOpen>
+    <Tree.Folder name="misc" defaultOpen>
+        <Tree.File name="ping.ts" />
+        <Tree.File name="help.ts" />
+    </Tree.Folder>
+    <Tree.Folder name="mod">
+        <Tree.File name="ban.ts" />
+        <Tree.File name="kick.ts" />
+    </Tree.Folder>
+  </Tree.Folder>
+  <Tree.Folder name="listeners" defaultOpen>
+    <Tree.File name="ready.ts" />
+  </Tree.Folder>
+  <Tree.File name="index.ts" />
+</Tree>
+
+## Creating your client
+
+Start by creating a client class that extends `FlintClient`:
+```ts src/index.ts
+import "dotenv/config"
+import { FlintClient, CommandHandler, ListenerHandler } from "@flint.js/core"
+
+class MyClient extends FlintClient {
+    commandHandler: CommandHandler
+    listenerHandler: ListenerHandler
+
+    constructor() {
+        super()
+
+        this.listenerHandler = new ListenerHandler(this, {
+            directory: "./src/listeners"
+        })
+
+        this.commandHandler = new CommandHandler(this, {
+            directory: "./src/commands",
+            prefix: "!"
+        })
+
+        this.commandHandler
+            .useListenerHandler(this.listenerHandler)
+    }
+
+    override async login(token: string) {
+        await this.listenerHandler.loadAll()
+        await this.commandHandler.loadAll()
+        return super.login(token)
+    }
+}
+
+const client = new MyClient()
+await client.login(process.env.TOKEN as string)
+```
+
+<Warning>
+    Make sure to loadAll `listenerHandler`, `inhibitorHandler`, `monitorHandler`, and `commandHandler` in the login function.
+    `loadAll` is an async function so it needs to be `await`ed, otherwise they wont work properly.
+</Warning>
+
+## Creating a command
+
+Create your first command using `defineCommand`:
+```ts src/commands/ping.ts
+import { defineCommand } from "@flint.js/core"
+
+export default defineCommand({
+    name: "ping",
+    description: "Pong!",
+
+    async execute(client, message) {
+        await message.reply("Pong! 🏓")
+    }
+})
+```
+
+## Creating a listener
+
+Create a listener for the `ready` event:
+```ts src/listeners/ready.ts
+import { defineListener } from "@flint.js/core"
+import { Events } from "@fluxerjs/core"
+
+export default defineListener({
+    name: "ready",
+    event: Events.Ready,
+    once: true,
+
+    async execute(client) {
+        console.log(`Logged in as ${client.user?.username}!`)
+    }
+})
+```
+
+## Running your bot
+
+Compile and run your bot:
+
+<CodeGroup>
+```bash npm
+npx tsc && node dist/index.js
+```
+```bash pnpm
+pnpm tsc && node dist/index.js
+```
+</CodeGroup>
+
+Your bot is now online and will respond to `!ping` with `Pong! 🏓`.
+
+## Next steps
+
+<CardGroup cols={2}>
+    <Card title="Commands" icon="terminal" href="/commands/defining-commands">
+        Learn more about defining commands.
+    </Card>
+    <Card title="Listeners" icon="bolt" href="/listeners/defining-listeners">
+        Learn more about defining listeners.
+    </Card>
+    <Card title="Inhibitors" icon="shield" href="/inhibitors/introduction">
+        Control who can run your commands.
+    </Card>
+    <Card title="Arguments" icon="brackets-curly" href="/commands/arguments">
+        Add typed arguments to your commands.
+    </Card>
+</CardGroup>

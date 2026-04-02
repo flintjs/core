@@ -1,0 +1,121 @@
+---
+title: Class-based Listeners
+description: Define listeners using classes instead of the defineListener factory.
+---
+
+## Overview
+
+Just like commands, listeners can be defined using classes by extending the `Listener` class. Both approaches are equivalent. Use whichever fits your style.
+```ts src/listeners/ready.ts
+import { Listener } from "@flint.js/core"
+import type { FlintClient } from "@flint.js/core"
+import { Events } from "@fluxerjs/core"
+
+export default class ReadyListener extends Listener<typeof Events.Ready> {
+    constructor() {
+        super("ready", {
+            event: Events.Ready,
+            once: true
+        })
+    }
+
+    async execute(client: FlintClient) {
+        console.log(`Logged in as ${client.user?.username}!`)
+    }
+}
+```
+
+## Constructor
+
+The `Listener` constructor takes a name and an options object:
+```ts
+super("listenerName", {
+    event: Events.MessageCreate,
+    once: false,
+    priority: 0
+})
+```
+
+## Generic type parameter
+
+The `Listener` class accepts a generic type parameter that corresponds to the event key. This is what types the `execute` parameters correctly:
+```ts
+export default class MessageCreateListener extends Listener<typeof Events.MessageCreate> {
+    constructor() {
+        super("messageCreate", {
+            event: Events.MessageCreate
+        })
+    }
+
+    async execute(client: FlintClient, message: Message) {
+        // message is correctly typed as Message
+    }
+}
+```
+
+Without the generic, the `execute` parameters will not be typed correctly.
+
+## Listening to Flint events
+
+Class-based listeners work with Flint's own events too:
+```ts src/listeners/commandError.ts
+import { Listener, FlintClientEvents } from "@flint.js/core"
+import type { FlintClient } from "@flint.js/core"
+
+export default class CommandErrorListener extends Listener<typeof FlintClientEvents.CommandError> {
+    constructor() {
+        super("commandError", {
+            event: FlintClientEvents.CommandError
+        })
+    }
+
+    async execute(client: FlintClient, { ctx, error }: { ctx: CommandContext, error: unknown }) {
+        console.error(`Error in ${ctx.meta.command.name}:`, error)
+        await ctx.message.reply("Something went wrong while running that command.")
+    }
+}
+```
+
+## When to use classes
+
+The `defineListener` factory is recommended for most listeners. Classes are a better fit when you need:
+
+- Private state across multiple event firings
+- Shared logic between listeners via inheritance
+- A more structured style across a larger codebase
+```ts src/listeners/voiceStateUpdate.ts
+import { Listener } from "@flint.js/core"
+import { Events } from "@fluxerjs/core"
+import type { FlintClient } from "@flint.js/core"
+import type { VoiceState } from "@fluxerjs/core"
+
+export default class VoiceStateUpdateListener extends Listener<typeof Events.VoiceStateUpdate> {
+
+    #activeChannels = new Map<string, string>()
+
+    constructor() {
+        super("voiceStateUpdate", {
+            event: Events.VoiceStateUpdate
+        })
+    }
+
+    async execute(client: FlintClient, oldState: VoiceState, newState: VoiceState) {
+        if (!oldState.channelId && newState.channelId) {
+            this.#activeChannels.set(newState.member!.id, newState.channelId)
+        } else if (oldState.channelId && !newState.channelId) {
+            this.#activeChannels.delete(oldState.member!.id)
+        }
+    }
+}
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+    <Card title="Inhibitors" icon="shield" href="/inhibitors/introduction">
+        Control who can run your commands.
+    </Card>
+    <Card title="Monitors" icon="eye" href="/monitors/introduction">
+        Watch every message your bot receives.
+    </Card>
+</CardGroup>

@@ -1,0 +1,129 @@
+---
+title: Defining Listeners
+description: How to listen to Fluxer events using defineListener.
+---
+
+## Overview
+
+Listeners let your bot respond to events emitted by Fluxer, things like a user joining a server, a message being deleted, or your bot coming online. Each listener file handles a single event.
+
+## Using defineListener
+
+The easiest way to define a listener is with the `defineListener` factory:
+```ts src/listeners/ready.ts
+import { defineListener } from "@flint.js/core"
+import { Events } from "@fluxerjs/core"
+
+export default defineListener({
+    name: "ready",
+    event: Events.Ready,
+    once: true,
+
+    async execute(client) {
+        console.log(`Logged in as ${client.user?.username}!`)
+    }
+})
+```
+
+Each listener file should have a default export of a `defineListener` call.
+
+## Listener options
+
+| Option | Type | Required | Description |
+|---|---|---|---|
+| `name` | `string` | Yes | A unique name for the listener |
+| `event` | `keyof ExtendedEvents` | Yes | The event to listen to |
+| `once` | `boolean` | No | Whether to only fire once, defaults to `false` |
+| `priority` | `number` | No | The priority of the listener, lower numbers run first |
+
+## Available events
+
+Flint exposes all events from `@fluxerjs/core` via `Events`, as well as its own internal events via `FlintClientEvents`.
+
+### Fluxer events
+```ts
+import { Events } from "@fluxerjs/core"
+
+Events.Ready
+Events.MessageCreate
+Events.MessageDelete
+Events.MessageUpdate
+Events.GuildMemberAdd
+Events.GuildMemberRemove
+// ...and more
+```
+
+### Flint events
+```ts
+import { FlintClientEvents } from "@flint.js/core"
+
+FlintClientEvents.CommandSuccess   // fires after a command runs successfully
+FlintClientEvents.CommandError     // fires when a command throws an error
+FlintClientEvents.CommandDenied    // fires when an inhibitor blocks a command
+FlintClientEvents.CommandNotFound  // fires when no matching command is found
+```
+
+## Listening to Flint events
+
+Flint's own events are useful for logging, analytics, or custom error handling:
+```ts src/listeners/commandError.ts
+import { defineListener, FlintClientEvents } from "@flint.js/core"
+
+export default defineListener({
+    name: "commandError",
+    event: FlintClientEvents.CommandError,
+
+    async execute(client, { ctx, error }) {
+        console.error(`Error in command ${ctx.meta.command.name}:`, error)
+
+        await ctx.message.reply("Something went wrong while running that command.")
+    }
+})
+```
+```ts src/listeners/commandDenied.ts
+import { defineListener, FlintClientEvents } from "@flint.js/core"
+
+export default defineListener({
+    name: "commandDenied",
+    event: FlintClientEvents.CommandDenied,
+
+    async execute(client, { result, ctx }) {
+        switch (result.reason) {
+            case "disabled":
+                return ctx.message.reply("That command is currently disabled.")
+            case "channel":
+                return ctx.message.reply("That command cannot be used in this channel.")
+            case "user.permissions":
+                return ctx.message.reply(`You are missing the following permissions: ${result.missing?.join(", ")}`)
+            case "cooldown":
+                return ctx.message.reply(`Please wait ${result.formatted} before using that command again.`)
+        }
+    }
+})
+```
+
+## One-time listeners
+
+Set `once: true` to fire a listener only once. This is useful for events like `Ready` that you only need to handle on startup:
+```ts
+export default defineListener({
+    name: "ready",
+    event: Events.Ready,
+    once: true,
+
+    async execute(client) {
+        console.log(`Logged in as ${client.user?.username}!`)
+    }
+})
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+    <Card title="Class-based Listeners" icon="code" href="/listeners/class-based">
+        Define listeners using classes instead of factories.
+    </Card>
+    <Card title="Inhibitors" icon="shield" href="/inhibitors/introduction">
+        Control who can run your commands.
+    </Card>
+</CardGroup>

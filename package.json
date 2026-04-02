@@ -2,6 +2,11 @@
     "name": "flint.js",
     "private": true,
     "license": "Apache-2.0",
+    "scripts": {
+        "core:build": "pnpm --filter @flint.js/core build",
+        "logger:build": "pnpm --filter @flint.js/logger build",
+        "docs:dev": "cd apps/docs && mint dev"
+    },
     "devDependencies": {
         "prettier": "^3.0.0",
         "ts-node": "^10.9.1",

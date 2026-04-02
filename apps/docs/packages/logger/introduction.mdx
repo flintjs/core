@@ -1,0 +1,146 @@
+---
+title: Logger
+description: Styled console logging for your Flint bot.
+---
+
+## Overview
+
+`@flint.js/logger` is an optional package that adds colored, structured logging to your bot. It has zero dependencies and uses raw ANSI escape codes under the hood.
+
+## Installation
+
+<CodeGroup>
+```bash npm
+npm install @flint.js/logger
+```
+```bash pnpm
+pnpm add @flint.js/logger
+```
+```bash yarn
+yarn add @flint.js/logger
+```
+</CodeGroup>
+
+## Basic usage
+```ts
+import { Logger } from "@flint.js/logger"
+
+const logger = new Logger()
+
+logger.info("Bot is starting...")
+logger.success("Loaded 12 commands")
+logger.warn("No inhibitors registered")
+logger.error("Failed to load command", error)
+logger.debug("Parsing message", message.content)
+```
+
+Output:
+```
+[12:34:56] [Flint] INFO    Bot is starting...
+[12:34:56] [Flint] SUCCESS Loaded 12 commands
+[12:34:56] [Flint] WARN    No inhibitors registered
+[12:34:56] [Flint] ERROR   Failed to load command
+[12:34:56] [Flint] DEBUG   Parsing message
+```
+
+## Logger options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `prefix` | `string` | `"Flint"` | The prefix shown in every log line |
+| `debug` | `boolean` | `false` | Whether to show debug logs |
+| `timestamp` | `boolean` | `true` | Whether to show timestamps |
+```ts
+const logger = new Logger({
+    prefix: "MyBot",
+    debug: true,
+    timestamp: true
+})
+```
+
+## Log levels
+
+| Method | Color | Description |
+|---|---|---|
+| `logger.info()` | Blue | General information |
+| `logger.success()` | Green | Successful operations |
+| `logger.warn()` | Yellow | Warnings that don't stop execution |
+| `logger.error()` | Red | Errors, optionally with a thrown value |
+| `logger.debug()` | Gray | Verbose output, only shown when `debug: true` |
+
+## Attaching to your client
+
+Attach the logger to your client so Flint's internal handler logging uses it too:
+```ts src/index.ts
+import { FlintClient, CommandHandler, ListenerHandler } from "@flint.js/core"
+import { Logger } from "@flint.js/logger"
+
+class MyClient extends FlintClient {
+    commandHandler: CommandHandler
+    listenerHandler: ListenerHandler
+
+    constructor() {
+        super()
+
+        this.logger = new Logger({ prefix: "MyBot" })
+
+        this.listenerHandler = new ListenerHandler(this, {
+            directory: "./src/listeners"
+        })
+
+        this.commandHandler = new CommandHandler(this, {
+            directory: "./src/commands",
+            prefix: "!"
+        })
+
+        this.commandHandler
+            .useListenerHandler(this.listenerHandler)
+    }
+
+    override async login(token: string) {
+        await this.listenerHandler.loadAll()
+        await this.commandHandler.loadAll()
+        return super.login(token)
+    }
+}
+```
+
+## Using in commands and listeners
+
+The logger is accessible anywhere you have a client reference:
+```ts
+export default defineCommand({
+    name: "ping",
+    description: "Pong!",
+
+    async execute(client, message) {
+        client.logger.info(`Ping command used by ${message.author.username}`)
+        await message.reply("Pong! 🏓")
+    }
+})
+```
+
+## ILogger interface
+
+If you want to bring your own logger instead of using `@flint.js/logger`, implement the `ILogger` interface exported from `@flint.js/core`:
+```ts
+import type { ILogger } from "@flint.js/core"
+
+class MyCustomLogger implements ILogger {
+    info(message: string, ...args: unknown[]) { ... }
+    success(message: string, ...args: unknown[]) { ... }
+    warn(message: string, ...args: unknown[]) { ... }
+    error(message: string, ...args: unknown[]) { ... }
+    debug(message: string, ...args: unknown[]) { ... }
+}
+
+this.logger = new MyCustomLogger()
+```
+
+Any logger that satisfies the `ILogger` interface will work, including third party loggers like `pino` or `winston` as long as they implement the same methods.
+
+## Next steps
+
+<Card title="Colors" icon="palette" href="/packages/logger/colors">
+    Use the colors utility to add color to your own log messages.
+</Card>

@@ -1,0 +1,115 @@
+---
+title: Inhibitors
+description: What inhibitors are and how they fit into Flint's command execution flow.
+---
+
+## Overview
+
+Inhibitors are middleware that run before a command executes. They can allow or block a command from running based on any condition you define. Permissions, cooldowns, disabled state, channel restrictions, and more.
+
+## Execution flow
+
+When a user sends a command, Flint runs all registered inhibitors in order before executing the command:
+```
+Message received
+    -> Monitors run (on every message)
+    -> Command parsed (prefix + name matched)
+    -> Inhibitors run (can block execution)
+    -> Command executes
+```
+
+If any inhibitor returns a failure result, the command is blocked and a `CommandDenied` event is emitted. No further inhibitors are run after a failure.
+
+## Registering inhibitors
+
+Inhibitors are registered on the `InhibitorHandler`. You need to add it to your client and link it to your `CommandHandler`:
+```ts src/index.ts
+import {
+    FlintClient,
+    CommandHandler,
+    ListenerHandler,
+    InhibitorHandler,
+    Disabled,
+    ChannelType,
+    UserPermissions,
+    BotPermissions
+} from "@flint.js/core"
+
+class MyClient extends FlintClient {
+    commandHandler: CommandHandler
+    listenerHandler: ListenerHandler
+    inhibitorHandler: InhibitorHandler
+
+    constructor() {
+        super()
+
+        this.inhibitorHandler = new InhibitorHandler(this, {
+            directory: "./src/inhibitors",
+            builtins: [
+                new Disabled(),
+                new ChannelType(),
+                new UserPermissions(),
+                new BotPermissions()
+            ]
+        })
+
+        this.listenerHandler = new ListenerHandler(this, {
+            directory: "./src/listeners"
+        })
+
+        this.commandHandler = new CommandHandler(this, {
+            directory: "./src/commands",
+            prefix: "!"
+        })
+
+        this.commandHandler
+            .useListenerHandler(this.listenerHandler)
+            .useInhibitorHandler(this.inhibitorHandler)
+    }
+
+    override async login(token: string) {
+        await this.inhibitorHandler.loadAll()
+        await this.listenerHandler.loadAll()
+        await this.commandHandler.loadAll()
+        return super.login(token)
+    }
+}
+```
+
+## Handling denied commands
+
+When an inhibitor blocks a command, Flint emits a `CommandDenied` event with the result and context. Listen to this event to send feedback to the user:
+```ts src/listeners/commandDenied.ts
+import { defineListener, FlintClientEvents } from "@flint.js/core"
+
+export default defineListener({
+    name: "commandDenied",
+    event: FlintClientEvents.CommandDenied,
+
+    async execute(client, { result, ctx }) {
+        switch (result.reason) {
+            case "disabled":
+                return ctx.message.reply("That command is currently disabled.")
+            case "channel":
+                return ctx.message.reply("That command cannot be used in this channel.")
+            case "user.permissions":
+                return ctx.message.reply(`You are missing the following permissions: ${result.missing?.join(", ")}`)
+            case "bot.permissions":
+                return ctx.message.reply(`I am missing the following permissions: ${result.missing?.join(", ")}`)
+            case "cooldown":
+                return ctx.message.reply(`Please wait ${result.formatted} before using that command again.`)
+        }
+    }
+})
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+    <Card title="Built-in Inhibitors" icon="shield-check" href="/inhibitors/built-in">
+        Learn about the inhibitors Flint ships with.
+    </Card>
+    <Card title="Custom Inhibitors" icon="shield" href="/inhibitors/custom">
+        Write your own inhibitors.
+    </Card>
+</CardGroup>
