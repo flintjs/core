@@ -1,3 +1,4 @@
+import { PermissionResolvable, PermissionsBitField } from "@fluxerjs/core"
 import { BaseHandler, BaseHandlerOptions } from "./BaseHandler"
 import { ArgumentRunner } from "../arguments/ArgumentRunner"
 import { TypeResolver } from "../arguments/TypeResolver"
@@ -69,6 +70,12 @@ export class CommandHandler extends BaseHandler<BaseCommand> {
 
     getArgumentRunner(): ArgumentRunner {
         return this.#argumentRunner
+    }
+
+    resolveCommandPermissions(permissions?: PermissionResolvable[]) {
+        return permissions?.length
+            ? permissions.map((p) => new PermissionsBitField(p).toArray())
+            : []
     }
 
 }
