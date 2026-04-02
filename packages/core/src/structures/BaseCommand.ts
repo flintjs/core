@@ -1,10 +1,12 @@
 import { Message, PermissionResolvable } from "@fluxerjs/core"
+import type { ArgumentOptions } from "../arguments/Argument"
 import { CommandMeta } from "../executor/CommandContext"
 import { FlintClient } from "../client/FlintClient"
+import { ResolveArgs } from "../arguments/types"
 import { Awaitable } from "../types"
 import { StringValue } from "ms"
 
-export interface BaseCommandOptions {
+export interface BaseCommandOptions<K> {
     description: string
     category?: string
     aliases?: string[]
@@ -13,9 +15,10 @@ export interface BaseCommandOptions {
     allowedChannels?: string[]
     disabled?: boolean
     prefixes?: string[]
+    args?: K
 }
 
-export abstract class BaseCommand {
+export abstract class BaseCommand<TArgs extends readonly ArgumentOptions[] = readonly ArgumentOptions[]> {
 
     public readonly name: string
     public readonly description: string
@@ -26,8 +29,9 @@ export abstract class BaseCommand {
     public readonly allowedChannels?: string[]
     public readonly disabled?: boolean
     public readonly prefixes?: string[]
+    readonly args?: TArgs
 
-    constructor(name: string, options: BaseCommandOptions) {
+    constructor(name: string, options: BaseCommandOptions<TArgs>) {
         this.name = name
         this.description = options.description
         this.category = options.category ?? "Uncategorized"
@@ -37,7 +41,8 @@ export abstract class BaseCommand {
         this.allowedChannels = options.allowedChannels
         this.disabled = options.disabled ?? false
         this.prefixes = options.prefixes ?? []
+        this.args = options.args
     }
 
-    abstract execute(client: FlintClient, message: Message, args: string[], ctx: CommandMeta): Awaitable<unknown>
+    abstract execute(client: FlintClient, message: Message, args: ResolveArgs<TArgs>, ctx: CommandMeta): Awaitable<unknown>
 }

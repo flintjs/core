@@ -33,6 +33,12 @@ export { BaseMonitor as Monitor } from "./structures/BaseMonitor"
 export { ok, err } from "./structures/BaseInhibitor"
 export type { InhibitorResult, InhibitorType } from "./structures/BaseInhibitor"
 
+// arguments
+export { TypeResolver } from "./arguments/TypeResolver"
+export type { TypeResolverFn } from "./arguments/TypeResolver"
+export { Argument } from "./arguments/Argument"
+export type { ArgumentOptions, ArgumentMatch, ArgumentType } from "./arguments/Argument"
+
 // built-in inhibitors and monitors
 export { Disabled } from "./structures/built-in/inhibitors/Disabled"
 export { ChannelType } from "./structures/built-in/inhibitors/ChannelType"
