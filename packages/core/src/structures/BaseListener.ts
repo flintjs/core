@@ -2,7 +2,7 @@ import type { FlintListeners, Awaitable } from "../types"
 import type { FlintClient } from "../client/FlintClient"
 import type { ClientEvents } from "@fluxerjs/core"
 
-export type WithClient<T extends unknown[]> = [FlintClient, ...T]
+export type WithClient<T extends unknown[]> = [any, ...T]
 export type ExtendedListeners = ClientEvents & FlintListeners
 
 export interface BaseListenerOptions<K> {

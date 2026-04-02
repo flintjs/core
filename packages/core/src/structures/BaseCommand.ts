@@ -10,6 +10,7 @@ export interface BaseCommandOptions<K> {
     description: string
     category?: string
     aliases?: string[]
+    ownerOnly?: boolean
     cooldown?: number | StringValue
     permissions?: PermissionResolvable[]
     allowedChannels?: string[]
@@ -18,12 +19,16 @@ export interface BaseCommandOptions<K> {
     args?: K
 }
 
-export abstract class BaseCommand<TArgs extends readonly ArgumentOptions[] = readonly ArgumentOptions[]> {
+export abstract class BaseCommand<
+    TClient extends FlintClient = FlintClient,
+    TArgs extends readonly ArgumentOptions[] = readonly ArgumentOptions[]
+> {
 
     public readonly name: string
     public readonly description: string
     public readonly category?: string
     public readonly aliases?: string[]
+    public readonly ownerOnly?: boolean
     public readonly cooldown?: number | StringValue
     public readonly permissions?: PermissionResolvable[]
     public readonly allowedChannels?: string[]
@@ -36,6 +41,7 @@ export abstract class BaseCommand<TArgs extends readonly ArgumentOptions[] = rea
         this.description = options.description
         this.category = options.category ?? "Uncategorized"
         this.aliases = options.aliases ?? []
+        this.ownerOnly = options.ownerOnly ?? false
         this.cooldown = options.cooldown
         this.permissions = options.permissions
         this.allowedChannels = options.allowedChannels
@@ -44,5 +50,5 @@ export abstract class BaseCommand<TArgs extends readonly ArgumentOptions[] = rea
         this.args = options.args
     }
 
-    abstract execute(client: FlintClient, message: Message, args: ResolveArgs<TArgs>, ctx: CommandMeta): Awaitable<unknown>
+    abstract execute(client: TClient, message: Message, args: ResolveArgs<TArgs>, ctx: CommandMeta): Awaitable<unknown>
 }
