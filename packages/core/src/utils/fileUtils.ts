@@ -1,7 +1,3 @@
-import { BaseInhibitor } from "../structures/BaseInhibitor"
-import { BaseListener } from "../structures/BaseListener"
-import { BaseCommand } from "../structures/BaseCommand"
-import { BaseMonitor } from "../structures/BaseMonitor"
 import { log } from "./logger"
 import path from "node:path"
 import url from "node:url"
@@ -12,19 +8,18 @@ export async function importFile<T = any>(filePath: string) {
         const resolved = path.resolve(filePath)
         const fileUrl = url.pathToFileURL(resolved).href
         const imported = await import(fileUrl)
+        const isLangMatch = new RegExp(/extends Language/)
+        const isClassMatch = new RegExp(/^class/)
 
-        return (imported.default ?? imported) as T
+        return {
+            isLanguage: isLangMatch.test((imported.default ?? imported)?.toString()),
+            isClass: isClassMatch.test((imported.default ?? imported)?.toString()),
+            module: (imported.default ?? imported) as T
+        }
     } catch (error) {
         log("error", `Failed to import ${filePath}`, error)
-        return null
+        return { isClass: false, isLanguage: false, module: null }
     }
-}
-
-export function isClass(input: any): boolean {
-    return input?.prototype instanceof BaseCommand
-        || input?.prototype instanceof BaseListener
-        || input?.prototype instanceof BaseInhibitor
-        || input?.prototype instanceof BaseMonitor
 }
 
 export function isFile(filePath: string) {

@@ -7,7 +7,7 @@
     "main": "build/src/index.js",
     "scripts": {
         "dev": "tsx watch src/index.ts",
-        "build": "prisma generate && tsc && tsc-alias",
+        "build": "tsc && tsc-alias",
         "check": "tsc --noEmit"
     },
     "keywords": [],
@@ -23,6 +23,7 @@
     "dependencies": {
         "@flint.js/core": "workspace:*",
         "@flint.js/logger": "workspace:*",
+        "@flint.js/i18n": "workspace:*",
         "@fluxerjs/core": "^1.2.4",
         "dotenv": "^17.3.1",
         "ms": "^2.1.3"

@@ -1,11 +1,12 @@
 import { defineListener, FlintClientListeners } from "@flint.js/core"
+import { ExampleBotClient } from "../../index"
 
 export default defineListener({
     event: FlintClientListeners.CommandDenied,
     name: "commandDenied",
     priority: 0,
 
-    async execute(client, { ctx, result }) {
+    async execute(client: ExampleBotClient, { ctx, result }) {
         if (result.ok) return
 
         let embed = {}
@@ -13,17 +14,17 @@ export default defineListener({
         switch (result.reason) {
             case "user.permissions":
                 embed = {
-                    title: "Missing Permissions",
-                    description: "You don't have the required permissions to execute this command"
+                    title: client.i18n.t("INHIBITOR_PERMISSIONS_EMBED_TITLE"),
+                    description: client.i18n.t("INHIBITOR_USER_PERMISSIONS_EMBED_DESCRIPTION")
                 }
             break
             case "bot.permissions":
                 embed = {
-                    title: "Missing Permissions",
-                    description: "I don't have the required permissions to execute this command",
+                    title: client.i18n.t("INHIBITOR_PERMISSIONS_EMBED_TITLE"),
+                    description: client.i18n.t("INHIBITOR_BOT_PERMISSIONS_EMBED_DESCRIPTION"),
                     fields: [
                         {
-                            name: "Permissions",
+                            name: client.i18n.t("INHIBITOR_BOT_PERMISSIONS_EMBED_FIELD_TITLE"),
                             value: result.missing?.map((p) => `\`${p}\``).join(", ")
                         }
                     ]
@@ -31,14 +32,14 @@ export default defineListener({
             break
             case "disabled":
                 embed = {
-                    title: "Disabled",
-                    description: "This command is currently disabled"
+                    title: client.i18n.t("INHIBITOR_DISABLED_EMBED_TITLE"),
+                    description: client.i18n.t("INHIBITOR_DISABLED_EMBED_DESCRIPTION")
                 }
             break
             case "cooldown":
                 embed = {
-                    title: "Cooldown",
-                    description: `⏱️ You can run this command again in \`${result.formatted}\``
+                    title: client.i18n.t("INHIBITOR_COOLDOWN_EMBED_TITLE"),
+                    description: client.i18n.t("INHIBITOR_COOLDOWN_EMBED_DESCRIPTION", { remaining: result.formatted })
                 }
             break
             default: return

@@ -1,0 +1,41 @@
+{
+    "name": "@flint.js/i18n",
+    "version": "0.1.0",
+    "description": "i18n library for @flint.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "type": "module",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/flintjs/core",
+        "directory": "packages/i18n"
+    },
+    "bugs": "https://github.com/flintjs/core/issues",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc -b"
+    },
+    "keywords": [
+        "fluxer",
+        "fluxerjs",
+        "framework"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "dependencies": {
+        "@flint.js/core": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/node": "^25.5.0"
+    }
+}

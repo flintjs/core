@@ -7,9 +7,9 @@ description: Define commands using classes instead of the defineCommand factory.
 
 For more advanced use cases, you can define commands by extending the `Command` class directly instead of using `defineCommand`. Both approaches produce the same result. Use whichever feels more natural to you.
 ```ts src/commands/ping.ts
-import { Command } from "@flint.js/core"
 import type { FlintClient } from "@flint.js/core"
 import type { Message } from "@fluxerjs/core"
+import { Command } from "@flint.js/core"
 
 export default class PingCommand extends Command {
     constructor() {
@@ -23,6 +23,10 @@ export default class PingCommand extends Command {
     }
 }
 ```
+
+<Tip>
+    If your client extends `FlintClient` with custom properties or handlers, annotate `client` directly in `execute` as your custom client that extends `FlintClient`
+</Tip>
 
 ## Constructor
 

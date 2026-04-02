@@ -1,0 +1,148 @@
+---
+title: i18n
+description: Internationalization support for your Flint bot.
+---
+
+## Overview
+
+`@flint.js/i18n` adds internationalization support to your Flint bot. It lets you define language files with translation keys and interpolated variables, then retrieve them anywhere you have a client reference.
+
+## Installation
+
+<CodeGroup>
+```bash npm
+npm install @flint.js/i18n
+```
+```bash pnpm
+pnpm add @flint.js/i18n
+```
+```bash yarn
+yarn add @flint.js/i18n
+```
+</CodeGroup>
+
+## Setup
+
+Add a `LanguageHandler` to your client:
+```ts src/index.ts
+import { FlintClient, CommandHandler, ListenerHandler } from "@flint.js/core"
+import { LanguageHandler } from "@flint.js/i18n"
+
+export class MyClient extends FlintClient {
+    commandHandler: CommandHandler
+    listenerHandler: ListenerHandler
+    i18n: LanguageHandler
+
+    constructor() {
+        super()
+
+        this.i18n = new LanguageHandler(this, {
+            directory: "./src/languages",
+            defaultLanguage: "en-US"
+        })
+
+        this.listenerHandler = new ListenerHandler(this, {
+            directory: "./src/listeners"
+        })
+
+        this.commandHandler = new CommandHandler(this, {
+            directory: "./src/commands",
+            prefix: "!"
+        })
+
+        this.commandHandler
+            .useListenerHandler(this.listenerHandler)
+    }
+
+    override async login(token: string) {
+        await this.i18n.loadAll()
+        await this.listenerHandler.loadAll()
+        await this.commandHandler.loadAll()
+        return super.login(token)
+    }
+}
+```
+
+## Handler options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `directory` | `string` | - | Path to the directory containing language files |
+| `defaultLanguage` | `string` | `"en-US"` | The language to use when none is specified |
+| `recursive` | `boolean` | `true` | Whether to scan subdirectories |
+
+## Retrieving translations
+
+The main function for receiving a translation is `client.i18n.t()`, which can be used anywhere you have a client reference:
+```ts
+// use the default language
+client.i18n.t("COMMAND_NOT_FOUND", { commandName: "ping" })
+
+// use a specific language, e.g. resolved from guild settings
+client.i18n.t("COMMAND_NOT_FOUND", { commandName: "ping" }, "fr-FR")
+```
+
+otherwise `@flint.js/i18n` provides some extra aliases for the `t` function if you would prefer to use them instead:
+
+```ts
+client.i18n.translate("KEY")
+client.i18n.translation("KEY")
+```
+
+If the requested language does not have the key, it falls back to the default language. If the default language does not have it either, the key itself is returned as-is.
+
+## Interpolation
+
+Translation strings support `{placeholder}` interpolation. Pass a params object to `get()` with matching keys:
+```ts
+// language file
+WELCOME: "Welcome to {guildName}, {username}!"
+
+// usage
+client.i18n.t("WELCOME", {
+    guildName: message.guild.name,
+    username: message.author.username
+})
+// "Welcome to My Server, john!"
+```
+
+<Warning>
+    Params are not type-checked at compile time. If a placeholder exists in the string but the matching key is not passed in params, it will not error, the placeholder will be returned as-is in the output. For example, `get("WELCOME", {})` would return `"Welcome to {guildName}, {username}!"`.
+</Warning>
+
+## Selecting a language per guild or user
+
+`LanguageHandler` does not handle language selection for you, this is intentional, as every bot stores preferences differently. Resolve the language yourself and pass it as the third argument to `get()`:
+```ts src/listeners/commandDenied.ts
+import { defineListener, FlintClientEvents } from "@flint.js/core"
+import type { MyClient } from "../index"
+
+export default defineListener({
+    name: "commandDenied",
+    event: FlintClientEvents.CommandDenied,
+
+    async execute(client: MyClient, { result, ctx }) {
+        // resolve language from wherever you store it
+        const language = await client.db.getGuildLanguage(ctx.message.guild?.id)
+
+        switch (result.reason) {
+            case "disabled":
+                return ctx.message.reply(
+                    client.i18n.t("COMMAND_DENIED_DISABLED", {}, language)
+                )
+            case "user.permissions":
+                return ctx.message.reply(
+                    client.i18n.t("COMMAND_DENIED_PERMISSIONS", {
+                        missing: result.missing?.join(", ")
+                    }, language)
+                )
+        }
+    }
+})
+```
+
+## Next steps
+
+<Card title="Creating a Language" icon="language" href="/packages/i18n/creating-a-language">
+    Learn how to define your own language files.
+</Card>

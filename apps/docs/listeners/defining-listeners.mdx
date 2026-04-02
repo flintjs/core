@@ -36,6 +36,31 @@ Each listener file should have a default export of a `defineListener` call.
 | `once` | `boolean` | No | Whether to only fire once, defaults to `false` |
 | `priority` | `number` | No | The priority of the listener, lower numbers run first |
 
+## Typing the client
+
+Just like commands, by default, `client` in `execute` is typed as `FlintClient`. If your client extends `FlintClient` with custom properties or handlers, annotate `client` directly in `execute`:
+```ts src/listeners/ready.ts
+import { defineListener } from "@flint.js/core"
+import type { MyClient } from "../index"
+import { Events } from "@fluxerjs/core"
+
+export default defineListener({
+    name: "ready",
+    event: Events.Ready,
+
+    async execute(client: MyClient) {
+        // client is now typed as MyClient
+        client.i18n.t("READY_MESSAGE")
+    }
+})
+```
+
+Only `client` needs to be annotated, all other parameters are inferred automatically.
+
+<Tip>
+    If most of your commands need access to custom client properties, consider creating a barrel export for your client type so you don't have to navigate to a specific path each time.
+</Tip>
+
 ## Available events
 
 Flint exposes all events from `@fluxerjs/core` via `Events`, as well as its own internal events via `FlintClientEvents`.

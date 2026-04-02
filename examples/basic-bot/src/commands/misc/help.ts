@@ -1,3 +1,4 @@
+import { PermissionsBitField } from "@fluxerjs/core"
 import { defineCommand } from "@flint.js/core"
 import { ExampleBotClient } from "../../"
 
@@ -7,6 +8,9 @@ export default defineCommand({
     category: "Misc",
     aliases: ["h"],
     prefixes: ["-"],
+    args: [
+        { id: "command", type: "command" }
+    ] as const,
 
     generateCodeBlock(content: string): string {
         return `\`\`\`\n${content}\n\`\`\``
@@ -19,23 +23,20 @@ export default defineCommand({
     },
 
     async execute(client, message, args) {
-        const commandName = args[0]?.toLowerCase()
 
-        if (commandName) {
-            const command = client.commandHandler.getCommand(commandName)
-            if (!command) {
-                return message.reply("That command was not found")
-            }
+        let command = args.command
 
-            const details = `Name: ${command.name}\nDescription: ${command.description}\nCategory: ${command.category}\nAliases: ${command.aliases?.join(", ")}\nAllowed Channels: ${command.allowedChannels?.join(", ") || "All"}\nDisabled: ${command.disabled ? "Yes" : "No"}\nPermissions: ${command.permissions?.join(", ") || "N/A"}`
-            const content = this.generateCodeBlock(details)
-
-            return message.reply({ content })
+        if (!command) {
+            return await message.reply({
+                content: this.generateCodeBlock(this.formatCommands(client))
+            })
         }
 
-        await message.reply({
-            content: this.generateCodeBlock(this.formatCommands(client))
-        })
+        const details = `Name: ${command.name}\nDescription: ${command.description}\nCategory: ${command.category}\nAliases: ${command.aliases?.join(", ")}\nAllowed Channels: ${command.allowedChannels?.join(", ") || "All"}\nDisabled: ${command.disabled ? "Yes" : "No"}\nPermissions: ${client.commandHandler.resolveCommandPermissions(command.permissions)?.join(", ") || "N/A"}`
+        const content = this.generateCodeBlock(details)
+
+        return message.reply({ content })
+
     }
 
 })

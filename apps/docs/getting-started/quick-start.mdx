@@ -100,16 +100,52 @@ export default defineListener({
 })
 ```
 
-## Running your bot
+## Developing your bot
 
-Compile and run your bot:
+Create a dev script in `package.json`:
+
+```json package.json
+{
+    "scripts": {
+        "dev": "tsx watch src/index.ts"
+    }
+}
+```
+
+and then run the dev command:
 
 <CodeGroup>
 ```bash npm
-npx tsc && node dist/index.js
+npm run dev
 ```
 ```bash pnpm
-pnpm tsc && node dist/index.js
+pnpm dev
+```
+</CodeGroup>
+
+## Running your bot
+
+Create build and start scripts in `package.json`:
+
+```json package.json
+{
+    "scripts": {
+        "build": "npx tsc",
+        "start": "node dist/index.js"
+    }
+}
+```
+
+and then build and run your bot with those commands:
+
+<CodeGroup>
+```bash npm
+npm run build
+npm run start
+```
+```bash pnpm
+pnpm build
+pnpm start
 ```
 </CodeGroup>
 

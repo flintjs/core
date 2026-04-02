@@ -86,6 +86,13 @@
                             "packages/logger/introduction",
                             "packages/logger/colors"
                         ]
+                    },
+                    {
+                        "group": "@flint.js/i18n",
+                        "pages": [
+                            "packages/i18n/introduction",
+                            "packages/i18n/creating-a-language"
+                        ]
                     }
                 ]
             }
@@ -96,6 +103,11 @@
                     "anchor": "GitHub",
                     "href": "https://github.com/flintjs/core",
                     "icon": "github"
+                },
+                {
+                    "anchor": "Packages",
+                    "href": "/packages",
+                    "icon": "globe"
                 }
             ]
         }

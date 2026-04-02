@@ -59,6 +59,28 @@ The `execute` function receives four parameters:
 | `usedAlias` | `string \| null` | The alias used, if any |
 | `command` | `BaseCommand` | The command that was executed |
 
+## Typing the client
+
+By default, `client` in `execute` is typed as `FlintClient`. If your client extends `FlintClient` with custom properties or handlers, annotate `client` directly in `execute`:
+```ts
+import { defineCommand } from "@flint.js/core"
+import type { MyClient } from "../index"
+
+export default defineCommand({
+    async execute(client: MyClient, message, args, ctx) {
+        // client is now typed as MyClient
+        // message, args, and ctx are still inferred automatically
+        client.i18n.t("PING_RESPONSE")
+    }
+})
+```
+
+Only `client` needs to be annotated, all other parameters are inferred automatically.
+
+<Tip>
+    If most of your commands need access to custom client properties, consider creating a barrel export for your client type so you don't have to navigate to a specific path each time.
+</Tip>
+
 ## Aliases
 
 Commands can be triggered by any of their aliases:

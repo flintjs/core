@@ -7,11 +7,11 @@ description: Define listeners using classes instead of the defineListener factor
 
 Just like commands, listeners can be defined using classes by extending the `Listener` class. Both approaches are equivalent. Use whichever fits your style.
 ```ts src/listeners/ready.ts
-import { Listener } from "@flint.js/core"
 import type { FlintClient } from "@flint.js/core"
+import { Listener } from "@flint.js/core"
 import { Events } from "@fluxerjs/core"
 
-export default class ReadyListener extends Listener<typeof Events.Ready> {
+export default class ReadyListener extends Listener {
     constructor() {
         super("ready", {
             event: Events.Ready,
@@ -24,6 +24,10 @@ export default class ReadyListener extends Listener<typeof Events.Ready> {
     }
 }
 ```
+
+<Tip>
+    If your client extends `FlintClient` with custom properties or handlers, annotate `client` directly in `execute` as your custom client that extends `FlintClient`
+</Tip>
 
 ## Constructor
 

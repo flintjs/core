@@ -4,6 +4,7 @@ import {
     ChannelType,
     CommandHandler,
     Disabled,
+    Cooldown,
     FlintClient,
     FlintClientOptions,
     InhibitorHandler,
@@ -13,11 +14,14 @@ import {
     UserPermissions
 } from "@flint.js/core"
 import { Logger } from "@flint.js/logger"
+import { LanguageHandler } from "@flint.js/i18n"
 
 import { config } from "./config"
 import "dotenv/config"
 
 export class ExampleBotClient extends FlintClient {
+
+    i18n: LanguageHandler
 
     constructor(options: FlintClientOptions = {}) {
         super({
@@ -50,6 +54,7 @@ export class ExampleBotClient extends FlintClient {
         this.inhibitorHandler = new InhibitorHandler(this, {
             directory: "./src/inhibitors",
             builtins: [
+                new Cooldown(),
                 new Disabled(),
                 new ChannelType(),
                 new UserPermissions(),
@@ -64,6 +69,11 @@ export class ExampleBotClient extends FlintClient {
             ]
         })
 
+        this.i18n = new LanguageHandler(this, {
+            directory: "./src/languages",
+            defaultLanguage: "en-US"
+        })
+
         this.commandHandler
             .useLogger(this.logger)
             .useInhibitorHandler(this.inhibitorHandler)
@@ -72,6 +82,7 @@ export class ExampleBotClient extends FlintClient {
     }
 
     public override async login(token: string) {
+        await this.i18n.loadAll()
         await this.inhibitorHandler.loadAll()
         await this.listenerHandler.loadAll()
         await this.commandHandler.loadAll()

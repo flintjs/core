@@ -5,6 +5,7 @@
     "scripts": {
         "core:build": "pnpm --filter @flint.js/core build",
         "logger:build": "pnpm --filter @flint.js/logger build",
+        "i18n:build": "pnpm --filter @flint.js/i18n build",
         "docs:dev": "cd apps/docs && mint dev"
     },
     "devDependencies": {

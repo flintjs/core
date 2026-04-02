@@ -1,0 +1,56 @@
+---
+title: Creating a new language
+description: Create a new language file.
+---
+
+## Overview
+
+You can implement your own translations by creating a new file for your specified language in the directory you chose when instantiating the `LanguageHandler`, and then extending the `Language` class exported by `@flint.js/i18n`.
+
+## Creating a language file
+```ts src/languages/es-ES.ts
+import { Language } from "@flint.js/i18n"
+
+export default class esES extends Language {
+    constructor() {
+        super("es-ES")
+        this.language = {
+            DEFAULT: (key) => `${key} aún no se ha encontrado para ${this.name}.`,
+            CLIENT_READY: "Iniciado sesión como {username}"
+        }
+    }
+}
+
+```
+
+## Usage example
+
+```ts src/listeners/ready.ts
+import { defineListener } from "@flint.js/core"
+import { Events } from "@fluxerjs/core"
+
+export default defineListener({
+    name: "ready",
+    event: Events.Ready,
+    once: true,
+
+    async execute(client) {
+        // optionally pass in the language after the params
+        // or resolve the current user/guild language from your database, if you choose to implement per-user/guild language support.
+        console.log(client.i18n.t("CLIENT_READY", {
+            username: client.user?.username ?? ""
+        }, "es-ES"))
+    }
+})
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+    <Card title="Monitors" icon="eye" href="/monitors/introduction">
+        Watch every message your bot receives.
+    </Card>
+    <Card title="Logger" icon="terminal" href="/packages/logger/introduction">
+        Add styled logging to your bot.
+    </Card>
+</CardGroup>

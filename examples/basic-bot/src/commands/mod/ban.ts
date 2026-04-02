@@ -1,5 +1,6 @@
 import { EmbedBuilder, PermissionFlags } from "@fluxerjs/core"
 import { defineCommand } from "@flint.js/core"
+import { ExampleBotClient } from "../../"
 
 export default defineCommand({
     name: "ban",
@@ -18,7 +19,7 @@ export default defineCommand({
     ] as const,
     permissions: [PermissionFlags.BanMembers, PermissionFlags.ModerateMembers, PermissionFlags.SendMessages],
 
-    async execute(client, message, args) {
+    async execute(client: ExampleBotClient, message, args) {
 
         if (!args.member) {
             return message.reply("Please provide a member to ban")
