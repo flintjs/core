@@ -1,0 +1,83 @@
+---
+title: Installation
+description: Install Flint and set up your project.
+---
+
+## Requirements
+
+- Node.js 18 or higher
+- TypeScript 5 or higher
+- A Fluxer bot token
+
+## Installation
+
+Install the core package using your package manager of choice:
+
+<CodeGroup>
+```bash npm
+npm install @flint.js/core
+```
+```bash pnpm
+pnpm add @flint.js/core
+```
+```bash yarn
+yarn add @flint.js/core
+```
+</CodeGroup>
+
+## TypeScript setup
+
+Flint requires a `tsconfig.json` with the following options:
+```json tsconfig.json
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "strict": true,
+        "outDir": "./dist",
+        "rootDir": "./src"
+    },
+    "include": ["src/**/*"]
+}
+```
+
+## Environment variables
+
+Flint expects your bot token to be available as an environment variable. Create a `.env` file in the root of your project:
+```bash .env
+TOKEN=your-bot-token-here
+```
+
+Install `dotenv` to load it automatically:
+
+<CodeGroup>
+```bash npm
+npm install dotenv
+```
+```bash pnpm
+pnpm add dotenv
+```
+```bash yarn
+yarn add dotenv
+```
+</CodeGroup>
+
+Then import it at the top of your entry file:
+```ts
+import "dotenv/config"
+```
+
+## Optional packages
+
+<CardGroup cols={2}>
+    <Card title="@flint.js/logger" icon="terminal" href="/packages/logger/introduction">
+        Colored console logging for your bot.
+    </Card>
+</CardGroup>
+
+## Next steps
+
+<Card title="Quick Start" icon="bolt" href="/getting-started/quick-start">
+    Get a bot up and running in minutes.
+</Card>

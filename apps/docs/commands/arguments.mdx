@@ -1,0 +1,169 @@
+---
+title: Arguments
+description: Typed argument parsing for your commands.
+---
+
+## Overview
+
+Flint parses command arguments automatically based on definitions you provide on your command. Instead of dealing with a raw `string[]`, you get back a typed object with each argument already cast to the right type.
+```ts
+export default defineCommand({
+    name: "ban",
+    description: "Ban a member",
+    args: [
+        { id: "member", type: "member" },
+        { id: "reason", type: "string", match: "rest" }
+    ] as const,
+
+    async execute(client, message, args) {
+        args.member // GuildMember | null
+        args.reason // string | null
+    }
+})
+```
+
+<Warning>
+    The `as const` assertion on the `args` array is required for TypeScript to infer the correct types for each argument. Without it, all arguments will be typed as `unknown`.
+</Warning>
+
+## Argument options
+
+| Option | Type | Required | Description |
+|---|---|---|---|
+| `id` | `string` | Yes | The key used to access the argument in `args` |
+| `type` | `ArgumentType` | No | The type to cast the argument to, defaults to `"string"` |
+| `match` | `ArgumentMatch` | No | How to match the argument, defaults to `"phrase"` |
+| `flag` | `string \| string[]` | No | The flag name(s) for `"flag"` and `"option"` match modes |
+| `default` | `unknown` | No | A default value if the argument is not provided or fails to resolve |
+
+## Built-in types
+
+| Type | TypeScript type | Description |
+|---|---|---|
+| `"string"` | `string` | A plain string word |
+| `"number"` | `number` | Any number |
+| `"integer"` | `number` | A whole number |
+| `"float"` | `number` | A decimal number |
+| `"boolean"` | `boolean` | `true`/`false`, `yes`/`no`, `on`/`off`, `1`/`0` |
+| `"url"` | `URL` | A valid URL |
+| `"user"` | `User` | A Fluxer user, resolved by mention, ID, or username |
+| `"member"` | `GuildMember` | A guild member, resolved by mention, ID, username, or nickname |
+| `"role"` | `Role` | A guild role, resolved by mention, ID, or name |
+| `"channel"` | `GuildChannel` | A guild channel, resolved by mention, ID, or name |
+
+## Match modes
+
+Match modes control how Flint extracts the raw phrase from the message before casting it.
+
+### phrase
+
+The default. Matches a single word:
+```ts
+// message: !command hello world
+args: [
+    { id: "first", type: "string" }, // "hello"
+    { id: "second", type: "string" } // "world"
+] as const
+```
+
+### rest
+
+Matches everything remaining in the message as a single string. Useful for reasons, descriptions, or any free-form text:
+```ts
+// message: !ban @user spamming in general
+args: [
+    { id: "member", type: "member" },
+    { id: "reason", type: "string", match: "rest" } // "spamming in general"
+] as const
+```
+
+### flag
+
+Matches a boolean flag anywhere in the message. Returns `true` if the flag is present, `false` if not:
+```ts
+// message: !prune 10 --bots
+args: [
+    { id: "amount", type: "integer" },
+    { id: "botsOnly", match: "flag", flag: "--bots" } // true
+] as const
+```
+
+### option
+
+Matches a named value anywhere in the message:
+```ts
+// message: !search dogs --limit 5
+args: [
+    { id: "query", type: "string" },
+    { id: "limit", type: "integer", match: "option", flag: "--limit" } // 5
+] as const
+```
+
+## Default values
+
+If an argument fails to resolve or is not provided, it returns `null` by default. You can provide a fallback value instead:
+```ts
+args: [
+    { id: "member", type: "member", default: (client, message) => message.member },
+    { id: "reason", type: "string", default: "No reason provided" }
+] as const
+```
+
+When a default is provided, the argument type will reflect it and will no longer be nullable.
+
+## Custom types
+
+You can pass a function as the `type` to define a custom resolver inline:
+```ts
+args: [
+    {
+        id: "volume",
+        type: (client, message, phrase) => {
+            const n = parseInt(phrase)
+            if (isNaN(n) || n < 0 || n > 100) return null
+            return n
+        }
+    }
+] as const
+```
+
+For reusable custom types, register them on the `CommandHandler`'s resolver so they can be referenced by name across all commands:
+```ts
+// in your client constructor
+this.commandHandler.resolver.addType("volume", (client, message, phrase) => {
+    const n = parseInt(phrase)
+    if (isNaN(n) || n < 0 || n > 100) return null
+    return n
+})
+```
+```ts
+// in any command
+args: [
+    { id: "volume", type: "volume" }
+] as const
+```
+
+## Null handling
+
+Arguments that fail to resolve return `null`. Always check for null before using them:
+```ts
+async execute(client, message, args) {
+    if (!args.member) {
+        return message.reply("Please provide a valid member.")
+    }
+
+    await args.member.ban()
+    await message.reply(`${args.member.user.username} has been banned.`)
+}
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+    <Card title="Class-based commands" icon="code" href="/commands/class-based">
+        Define commands using classes instead of factories.
+    </Card>
+    <Card title="Inhibitors" icon="shield" href="/inhibitors/introduction">
+        Control who can run your commands.
+    </Card>
+</CardGroup>

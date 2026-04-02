@@ -1,0 +1,115 @@
+{
+    "$schema": "https://mintlify.com/docs.json",
+    "theme": "maple",
+    "name": "@flint.js",
+    "colors": {
+        "primary": "#4541D9",
+        "light": "#6B68E0",
+        "dark": "#3330B0"
+    },
+    "favicon": "/favicon.svg",
+    "logo": {
+        "light": "/logo/light.svg",
+        "dark": "/logo/dark.svg"
+    },
+    "navbar": {
+        "links": [
+            {
+                "label": "GitHub",
+                "href": "https://github.com/flintjs"
+            }
+        ],
+        "primary": {
+            "type": "github",
+            "href": "https://github.com/flintjs/core"
+        }
+    },
+    "navigation": {
+        "tabs": [
+            {
+                "tab": "Documentation",
+                "groups": [
+                    {
+                        "group": "Getting Started",
+                        "pages": [
+                            "getting-started/introduction",
+                            "getting-started/installation",
+                            "getting-started/quick-start"
+                        ]
+                    },
+                    {
+                        "group": "Core",
+                        "pages": [
+                            "core/client",
+                            "core/handlers"
+                        ]
+                    },
+                    {
+                        "group": "Commands",
+                        "pages": [
+                            "commands/defining-commands",
+                            "commands/arguments",
+                            "commands/class-based"
+                        ]
+                    },
+                    {
+                        "group": "Listeners",
+                        "pages": [
+                            "listeners/defining-listeners",
+                            "listeners/class-based"
+                        ]
+                    },
+                    {
+                        "group": "Inhibitors",
+                        "pages": [
+                            "inhibitors/introduction",
+                            "inhibitors/built-in",
+                            "inhibitors/custom"
+                        ]
+                    },
+                    {
+                        "group": "Monitors",
+                        "pages": [
+                            "monitors/introduction",
+                            "monitors/built-in",
+                            "monitors/custom"
+                        ]
+                    }
+                ]
+            },
+            {
+                "tab": "Packages",
+                "groups": [
+                    {
+                        "group": "@flint.js/logger",
+                        "pages": [
+                            "packages/logger/introduction",
+                            "packages/logger/colors"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "global": {
+            "anchors": [
+                {
+                    "anchor": "GitHub",
+                    "href": "https://github.com/flintjs/core",
+                    "icon": "github"
+                }
+            ]
+        }
+    },
+    "footer": {
+        "socials": {
+            "github": "https://github.com/flintjs"
+        }
+    },
+    "contextual": {
+        "options": [
+            "copy",
+            "view",
+            "claude"
+        ]
+    }
+}

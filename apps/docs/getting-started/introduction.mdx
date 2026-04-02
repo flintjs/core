@@ -1,0 +1,47 @@
+---
+title: Introduction
+description: What Flint is, why it exists, and how it's built.
+---
+
+## What is Flint?
+
+Flint is a TypeScript-first framework for building bots on [Fluxer](https://fluxer.js.org) - an open source instant messaging and VoIP platform built for friends, groups, and communities. It is built on top of `@fluxerjs/core` and provides a clean, structured way to organize your bot's code.
+
+Instead of wiring everything up yourself, Flint handles the boilerplate. You define commands, listeners, inhibitors, and monitors as individual files, and Flint loads and manages them automatically.
+
+## Why Flint?
+
+`@fluxerjs/core` is a great SDK, but it's intentionally low-level. As your bot grows, you'll find yourself writing the same patterns over and over - parsing commands, checking permissions, handling errors. Flint codifies those patterns into a framework so you don't have to.
+
+<CardGroup cols={2}>
+    <Card title="TypeScript-first" icon="code">
+        Every API is fully typed. Autocompletion and type safety throughout, including command arguments.
+    </Card>
+    <Card title="File-based loading" icon="folder">
+        Drop a file in your commands folder and it's automatically loaded. No registration needed.
+    </Card>
+    <Card title="Extensible" icon="puzzle-piece">
+        Add your own inhibitors, monitors, and argument types. Flint gets out of your way when you need it to.
+    </Card>
+    <Card title="Beginner friendly" icon="graduation-cap">
+        Simple factory functions like `defineCommand` and `defineListener` get you started fast.
+    </Card>
+</CardGroup>
+
+## How it's built
+
+Flint is built on top of `@fluxerjs/core` and written entirely in TypeScript. It has no other runtime dependencies.
+
+| Package | Description |
+|---|---|
+| `@flint.js/core` | The core framework. client, commands, listeners, inhibitors, monitors, arguments |
+| `@flint.js/logger` | Optional colored logging for your bot |
+
+## Inspired by
+
+Flint is heavily inspired by:
+- [discord-akairo](https://github.com/discord-akairo/discord-akairo)
+- [klasa](https://github.com/dirigeants/klasa)
+- [Sapphire](https://github.com/sapphiredev/framework)
+
+Three excellent Discord.js bot frameworks. If you've used either of those, Flint will feel familiar.

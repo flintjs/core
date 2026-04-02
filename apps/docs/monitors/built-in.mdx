@@ -1,0 +1,67 @@
+---
+title: Built-in Monitors
+description: The monitors that ship with Flint and how to use them.
+---
+
+## Overview
+
+Flint ships with two built-in monitors that cover the most common use cases. They are not enabled by default, you opt in by passing them as `builtins` to your `MonitorHandler`.
+```ts
+import {
+    MonitorHandler,
+    SpamFilter,
+    Antilink,
+} from "@flint.js/core"
+
+this.monitorHandler = new MonitorHandler(this, {
+    directory: "./src/monitors",
+    builtins: [
+        new SpamFilter({
+            threshold: 10,
+            interval: 5000,
+            action: "both",
+            message: "Please slow down. You are sending messages too fast."
+        }),
+        new Antilink({
+            action: "both",
+            message: "⛔ Advertising is not allowed",
+            deleteOwnMessageDelay: 20_000,
+            ownerBypass: true
+        })
+    ]
+})
+```
+
+## SpamFilter
+
+Deletes a users message if they exceed the spam filter threshold within the given interval time.
+
+SpamFilter Options:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `threshold` | `number` | `5` | How many messages until the user exceeds the limit |
+| `interval` | `number` | `false` | The timeframe in which the threshold can be reached |
+| `action` | `"delete"`, `"warn"`, `"both"` | `"both"` | Action type when triggering the monitor |
+| `message` | `string` | `"Please slow down."` | The message to send the user when triggering the monitor |
+
+
+## Antilink
+
+Deletes a users message if it contains a fluxer invite/oauth2 url
+
+Antilink Options:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `action` | `"delete"`, `"warn"`, `"both"` | `"both"` | Action type when triggering the monitor |
+| `message` | `string` | `"Advertising is not allowed"` | The message to send the user when triggering the monitor |
+| `deleteOwnMessageDelay` | `number` | `null` | If specified, how long should the bot wait before deleting its own message |
+| `ownerBypass` | `boolean` | `false` | Whether this antilink should skip if the server owner sends a matching link |
+
+
+## Next steps
+
+<Card title="Custom Monitors" icon="shield" href="/monitors/custom">
+    Write your own monitors to handle any blocking logic you need.
+</Card>
