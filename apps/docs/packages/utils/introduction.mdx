@@ -1,0 +1,152 @@
+---
+title: Utils
+description: Useful utilities for your Flint bot including fluxer-specific for things such as message formatting.
+---
+
+## Overview
+
+`@flint.js/utils` is an optional package that adds useful utilities that you can use. It's also used internally by `@flint.js/core`.
+In the future, there might be utilities for handling things like paginated messages, message confirmations, etc. unless those get implemented to /core
+
+## Installation
+
+<CodeGroup>
+```bash npm
+npm install @flint.js/utils
+```
+```bash pnpm
+pnpm add @flint.js/utils
+```
+```bash yarn
+yarn add @flint.js/utils
+```
+</CodeGroup>
+
+## Usage
+
+All the ways you can use `@flint.js/utils`
+
+### `isFunction`
+Check whether or not a value is a Function
+```ts
+import { isFunction } from "@flint.js/utils"
+
+isFunction(input) // -> boolean
+```
+
+### `isObject`
+Check whether or not a value is an Object
+```ts
+import { isObject } from "@flint.js/utils"
+
+isObject(input) // -> boolean
+```
+
+### `isArray`
+Check whether or not a value is an Array
+```ts
+import { isArray } from "@flint.js/utils"
+
+isArray(input) // -> boolean
+```
+
+### `isThenable`
+Check whether or not a value is a Promise and/or has `.then()` / `.catch()` methods
+```ts
+import { isThenable } from "@flint.js/utils"
+
+isThenable(input) // -> boolean
+```
+
+### `randomArrayItem`
+Receive a random item in an array
+```ts
+import { randomArrayItem } from "@flint.js/utils"
+
+randomArrayItem(["...", "..."]) // -> array item
+```
+
+### `randomNumber`
+Generate a random number between a min and max value
+```ts
+import { randomNumber } from "@flint.js/utils"
+
+randomNumber(0, 20) // -> number
+```
+
+### `truncate`
+Truncate a string if the length exceeds a specified value
+```ts
+import { truncate } from "@flint.js/utils"
+
+const message = "Hello world this is a message from the @flint.js docs!"
+truncate(message, 20) // -> "Hello world this is ..."
+```
+
+## Fluxer-specific utilities
+
+### `toCode`
+Formats a string to fluxer `inline code` markdown
+```ts
+import { toCode } from "@flint.js/utils"
+
+toCode("hello world") // -> "`hello world`"
+```
+
+### `toCodeBlock`
+Formats a string to fluxer codeblock markdown
+```ts
+import { toCodeBlock } from "@flint.js/utils"
+
+const code = `interface CodeBlock {
+    content: string
+    language?: string
+}`
+
+toCodeBlock(code, "ts")
+```
+
+```ts
+interface CodeBlock {
+    content: string
+    language?: string
+}
+```
+
+### `toBold`
+Formats a string to fluxer <b>bold</b> markdown
+```ts
+import { toBold } from "@flint.js/utils"
+
+toBold("hello world") // -> "**hello world**"
+```
+
+### `toItalic`
+Formats a string to fluxer <i>italic</i> markdown
+```ts
+import { toItalic } from "@flint.js/utils"
+
+toItalic("hello world") // -> "*hello world*"
+```
+
+### `toUnderline`
+Formats a string to fluxer <u>underline</u> markdown
+```ts
+import { toUnderline } from "@flint.js/utils"
+
+toUnderline("hello world") // -> "__hello world__"
+```
+
+### `toStrikethrough`
+Formats a string to fluxer <strike>strikethrough</strike> markdown
+```ts
+import { toStrikethrough } from "@flint.js/utils"
+
+toStrikethrough("hello world") // -> "~~hello world~~"
+```
+
+## Next steps
+
+<Card title="Stopwatch" icon="stopwatch" href="/packages/utils/stopwatch">
+    Use the stopwatch class to time specific actions
+</Card>

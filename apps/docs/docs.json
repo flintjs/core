@@ -93,6 +93,13 @@
                             "packages/i18n/introduction",
                             "packages/i18n/creating-a-language"
                         ]
+                    },
+                    {
+                        "group": "@flint.js/utils",
+                        "pages": [
+                            "packages/utils/introduction",
+                            "packages/utils/stopwatch"
+                        ]
                     }
                 ]
             }

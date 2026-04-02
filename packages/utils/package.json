@@ -1,0 +1,38 @@
+{
+    "name": "@flint.js/utils",
+    "version": "0.1.0",
+    "description": "Utility library for @flint.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "type": "module",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/flintjs/core",
+        "directory": "packages/utils"
+    },
+    "bugs": "https://github.com/flintjs/core/issues",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc -b"
+    },
+    "keywords": [
+        "fluxer",
+        "fluxerjs",
+        "framework"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^25.5.0"
+    }
+}

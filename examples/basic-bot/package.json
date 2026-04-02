@@ -24,6 +24,7 @@
         "@flint.js/core": "workspace:*",
         "@flint.js/logger": "workspace:*",
         "@flint.js/i18n": "workspace:*",
+        "@flint.js/utils": "workspace:*",
         "@fluxerjs/core": "^1.2.4",
         "dotenv": "^17.3.1",
         "ms": "^2.1.3"

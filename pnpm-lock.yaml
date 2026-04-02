@@ -29,6 +29,9 @@ importers:
       '@flint.js/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@flint.js/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@fluxerjs/core':
         specifier: ^1.2.4
         version: 1.2.4
@@ -85,6 +88,12 @@ importers:
         version: 25.5.0
 
   packages/logger: {}
+
+  packages/utils:
+    devDependencies:
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.5.0
 
 packages:
 
