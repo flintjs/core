@@ -7,13 +7,14 @@ import type { Message } from "@fluxerjs/core"
 import type { Awaitable } from "../types"
 
 export function defineCommand<
-    TArgs extends readonly ArgumentOptions[],
-    T extends Omit<BaseCommand, "execute" | "args"> & Record<string, any>
+    TClient extends FlintClient = FlintClient,
+    TArgs extends readonly ArgumentOptions[] = readonly ArgumentOptions[],
+    T extends Omit<BaseCommand, "execute" | "args"> & Record<string, any> = Omit<BaseCommand, "execute" | "args"> & Record<string, any>
 >(
     command: T & {
-        args?: TArgs,
-        execute(this: T, client: FlintClient, message: Message, args: ResolveArgs<TArgs>, ctx: CommandMeta): Awaitable<unknown>
+        args?: TArgs
+        execute(this: T, client: TClient, message: Message, args: ResolveArgs<TArgs>, ctx: CommandMeta): Awaitable<unknown>
     }
 ): T & { args?: TArgs } {
-    return command
+    return command as T & { args?: TArgs }
 }

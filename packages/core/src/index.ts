@@ -18,6 +18,7 @@ export { defineCommand } from "./factories/command"
 export { defineListener } from "./factories/listener"
 
 // handlers
+export { BaseHandler } from "./handlers/BaseHandler"
 export { CommandHandler } from "./handlers/CommandHandler"
 export { ListenerHandler } from "./handlers/ListenerHandler"
 export { InhibitorHandler } from "./handlers/InhibitorHandler"
@@ -41,6 +42,7 @@ export type { ArgumentOptions, ArgumentMatch, ArgumentType } from "./arguments/A
 
 // built-in inhibitors and monitors
 export { Disabled } from "./structures/built-in/inhibitors/Disabled"
+export { Cooldown } from "./structures/built-in/inhibitors/Cooldown"
 export { ChannelType } from "./structures/built-in/inhibitors/ChannelType"
 export { UserPermissions } from "./structures/built-in/inhibitors/UserPermissions"
 export { BotPermissions } from "./structures/built-in/inhibitors/BotPermissions"
