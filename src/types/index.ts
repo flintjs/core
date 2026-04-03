@@ -103,3 +103,5 @@ export interface FluxerClientOptions {
         events?: HandlerOptions
     }
 }
+
+export type { CommandContext }
