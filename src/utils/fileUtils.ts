@@ -3,16 +3,25 @@ import path from "node:path"
 import url from "node:url"
 import fs from "node:fs"
 
+type ModuleType = "language" | "schedule" | "other"
+
 export async function importFile<T = any>(filePath: string) {
     try {
         const resolved = path.resolve(filePath)
         const fileUrl = url.pathToFileURL(resolved).href
         const imported = await import(fileUrl)
         const isLangMatch = new RegExp(/extends Language/)
+        const isScheduleMatch = new RegExp(/extends Schedule/)
         const isClassMatch = new RegExp(/^class/)
 
+        const moduleType: ModuleType = !!isLangMatch.test((imported.default ?? imported)?.toString())
+            ? "language"
+            : !!isScheduleMatch.test((imported.default ?? imported)?.toString())
+            ? "schedule"
+            : "other"
+
         return {
-            isLanguage: isLangMatch.test((imported.default ?? imported)?.toString()),
+            type: moduleType,
             isClass: isClassMatch.test((imported.default ?? imported)?.toString()),
             module: (imported.default ?? imported) as T
         }

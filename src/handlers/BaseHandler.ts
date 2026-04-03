@@ -2,6 +2,7 @@ import { importFile, scanFolder } from "../utils/fileUtils"
 import { FlintClient } from "../client/FlintClient"
 import { log, setLogger } from "../utils/logger"
 import type { ILogger } from "../types/ILogger"
+import { isFunction } from "@flint.js/utils"
 
 export interface BaseHandlerOptions {
     directory: string
@@ -39,7 +40,7 @@ export abstract class BaseHandler<T extends { name: string }> {
 
         for (const file of files) {
             try {
-                const { isClass, isLanguage, module } = await importFile(file)
+                const { type, isClass, module } = await importFile(file)
 
                 let data = module
 
@@ -47,21 +48,37 @@ export abstract class BaseHandler<T extends { name: string }> {
                     data = new module()
                 }
 
-                if (isLanguage) {
-                    if (!("language" in data)) {
-                        log("warn", `File ${file} is missing the "languages" property.`)
-                        continue
-                    }
-                } else {
-                    if (!("execute" in data)) {
-                        log("warn", `File ${file} is missing the "execute" property.`)
-                        continue
-                    }
-                }
-
                 if (!("name" in data)) {
                     log("warn", `File ${file} is missing the "name" property.`)
                     continue
+                }
+
+                switch(type) {
+                    case "language": {
+                        if (!data.language) {
+                            log("warn", `Language ${module.name} is missing the "language" property.`)
+                            continue
+                        }
+                        break
+                    }
+                    case "schedule": {
+                        if (!isFunction(data?.run)) {
+                            log("warn", `Schedule ${module.name} is missing the "run" property.`)
+                            continue
+                        }
+                        break
+                    }
+                    case "other": {
+                        if (!isFunction(data?.execute)) {
+                            log("warn", `File ${module.name} is missing the "execute" property.`)
+                            continue
+                        }
+                        break
+                    }
+                    default: {
+                        log("warn", `File ${file} os of unknown type. Make sure it is defined properly.`)
+                        continue
+                    }
                 }
 
                 this.store.set(data.name, data)
