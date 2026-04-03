@@ -34,6 +34,7 @@ export class ScheduleHandler<TSchedules = Record<string, never>> extends BaseHan
     #tickInterval: number
     #defaultMissedBehaviour: "run" | "skip"
     #ticker?: NodeJS.Timeout
+    #ticking = false
 
     constructor(client: FlintClient, options: ScheduleHandlerOptions) {
         super(client, options)
@@ -110,28 +111,36 @@ export class ScheduleHandler<TSchedules = Record<string, never>> extends BaseHan
     }
 
     async #tick(): Promise<void> {
-        const now = Date.now()
-        const tasks = await this.#getTasks()
-        const due = tasks.filter(t => t.runAt <= now)
+        if (this.#ticking) return
+        this.#ticking = true
 
-        for (const task of due) {
-            const schedule = this.store.get(task.name)
-            if (!schedule) continue
+        try {
+            const now = Date.now()
+            const tasks = await this.#getTasks()
+            const due = tasks.filter(t => t.runAt <= now)
 
-            try {
-                await schedule.run(this.client, task)
-            } catch (error) {
-                log("error", `Error running scheduled task "${task.name}"`, error)
+            for (const task of due) {
+                const schedule = this.store.get(task.name)
+                if (!schedule) continue
+
+                try {
+                    await schedule.run(this.client, task)
+                } catch (error) {
+                    log("error", `Error running scheduled task "${task.name}"`, error)
+                }
+
+                if (task.repeat && task.interval) {
+                    task.runAt = Date.now() + task.interval
+                } else {
+                    tasks.splice(tasks.indexOf(task), 1)
+                }
             }
 
-            if (task.repeat && task.interval) {
-                task.runAt = Date.now() + task.interval
-            } else {
-                tasks.splice(tasks.indexOf(task), 1)
-            }
+            await this.#saveTasks(tasks)
+        } finally {
+            this.#ticking = false
         }
 
-        await this.#saveTasks(tasks)
     }
 
     async #getTasks(): Promise<ScheduledTask[]> {
