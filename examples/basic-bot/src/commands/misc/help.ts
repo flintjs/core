@@ -1,4 +1,3 @@
-import { PermissionsBitField } from "@fluxerjs/core"
 import { defineCommand } from "@flint.js/core"
 import { ExampleBotClient } from "../../"
 
@@ -24,7 +23,7 @@ export default defineCommand({
 
     async execute(client, message, args) {
 
-        let command = args.command
+        let command = args?.command
 
         if (!command) {
             return await message.reply({
@@ -32,7 +31,18 @@ export default defineCommand({
             })
         }
 
-        const details = `Name: ${command.name}\nDescription: ${command.description}\nCategory: ${command.category}\nAliases: ${command.aliases?.join(", ")}\nAllowed Channels: ${command.allowedChannels?.join(", ") || "All"}\nDisabled: ${command.disabled ? "Yes" : "No"}\nPermissions: ${client.commandHandler.resolveCommandPermissions(command.permissions)?.join(", ") || "N/A"}`
+        const details = [
+            `Name: ${command.name}`,
+            `Description: ${command.description}`,
+            `Category: ${command.category}`,
+            `Aliases: ${command.aliases?.join(" | ") || "None"}`,
+            `Prefixes: ${command.prefixes?.join(" | ") || "None"}`,
+            `Allowed Channels: ${command.allowedChannels?.join(", ") || "All"}`,
+            `Disabled: ${command.disabled ? "✅" : "❌"}`,
+            `Owner Only: ${command.ownerOnly ? "✅" : "❌"}`,
+            `Permissions: ${client.commandHandler.resolveCommandPermissions(command.permissions)?.join(", ") || "N/A"}`
+        ].join("\n")
+
         const content = this.generateCodeBlock(details)
 
         return message.reply({ content })
