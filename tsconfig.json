@@ -1,11 +1,10 @@
 {
     "files": [],
     "references": [
-        {
-            "path": "./packages/core"
-        },
-        {
-            "path": "./examples/basic-bot"
-        }
+        { "path": "./packages/core" },
+        { "path": "./packages/i18n" },
+        { "path": "./packages/logger" },
+        { "path": "./packages/utils" },
+        { "path": "./examples/basic-bot" }
     ]
 }
