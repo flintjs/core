@@ -5,6 +5,7 @@ export type ArgumentMatch = "phrase" | "rest" | "flag" | "option"
 
 export type ArgumentType =
     | "string"
+    | "StringValue"
     | "number"
     | "integer"
     | "float"

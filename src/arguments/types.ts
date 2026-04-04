@@ -5,6 +5,7 @@ import type { FlintClient } from "../client/FlintClient"
 
 export type ResolveArgumentType<T extends ArgumentType> =
     T extends "string" ? string :
+    T extends "StringValue" ? number :
     T extends "number" | "integer" | "float" ? number :
     T extends "boolean" ? boolean :
     T extends "url" ? URL :

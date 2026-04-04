@@ -1,3 +1,4 @@
+import ms, { StringValue } from "ms"
 import type { FlintClient } from "../client/FlintClient"
 import type { Message } from "@fluxerjs/core"
 
@@ -29,6 +30,10 @@ export class TypeResolver {
     #registerBuiltins(client: FlintClient): void {
 
         this.addType("string", (_, __, phrase) => phrase || null)
+        this.addType("StringValue", (_, __, phrase) => {
+            const n = ms(phrase as StringValue)
+            return isNaN(n) ? null : n
+        })
         this.addType("number", (_, __, phrase) => {
             const n = Number(phrase)
             return isNaN(n) ? null : n
