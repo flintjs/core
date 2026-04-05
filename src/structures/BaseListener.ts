@@ -1,5 +1,5 @@
-import type { FlintListeners, Awaitable } from "../types"
-import type { FlintClient } from "../client/FlintClient"
+import type { FlintListeners, Awaitable } from "../types/index.js"
+import type { FlintClient } from "../client/FlintClient.js"
 import type { ClientEvents } from "@fluxerjs/core"
 
 export type WithClient<T extends unknown[]> = [any, ...T]

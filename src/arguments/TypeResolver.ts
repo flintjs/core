@@ -1,6 +1,6 @@
-import ms, { StringValue } from "ms"
-import type { FlintClient } from "../client/FlintClient"
+import type { FlintClient } from "../client/FlintClient.js"
 import type { Message } from "@fluxerjs/core"
+import ms, { StringValue } from "ms"
 
 export type TypeResolverFn = (client: FlintClient, message: Message, phrase: string) => unknown | Promise<unknown>
 

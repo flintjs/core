@@ -1,7 +1,7 @@
-import type { CommandContext } from "../../../executor/CommandContext"
-import { BaseInhibitor, ok, err } from "../../BaseInhibitor"
-import type { BaseCommand } from "../../BaseCommand"
-import { log } from "../../../utils/logger"
+import type { CommandContext } from "../../../executor/CommandContext.js"
+import { BaseInhibitor, ok, err } from "../../BaseInhibitor.js"
+import type { BaseCommand } from "../../BaseCommand.js"
+import { log } from "../../../utils/logger.js"
 
 export class OwnerOnly extends BaseInhibitor {
 

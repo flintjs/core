@@ -1,10 +1,10 @@
-import { buildContext, buildInhibitorContext } from "./CommandContext"
-import { BaseListener } from "../structures/BaseListener"
-import { FlintClient } from "../client/FlintClient"
-import { kInhibitors } from "../internal/symbols"
+import { buildContext, buildInhibitorContext } from "./CommandContext.js"
+import { BaseListener } from "../structures/BaseListener.js"
+import { FlintClientListeners } from "../types/index.js"
+import { FlintClient } from "../client/FlintClient.js"
+import { kInhibitors } from "../internal/symbols.js"
 import { Events, Message } from "@fluxerjs/core"
-import { FlintClientListeners } from "../types"
-import { parseMessage } from "./CommandParser"
+import { parseMessage } from "./CommandParser.js"
 
 export class CommandExecutor extends BaseListener {
 
@@ -72,6 +72,7 @@ export class CommandExecutor extends BaseListener {
             client,
             message,
             parsed.args,
+            parsed.rawRest,
             command.args ?? []
         )
 

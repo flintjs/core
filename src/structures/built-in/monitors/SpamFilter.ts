@@ -1,8 +1,8 @@
-import { BaseMonitor } from "../../../structures/BaseMonitor"
-import { FlintClient } from "../../../client/FlintClient"
+import { BaseMonitor } from "../../../structures/BaseMonitor.js"
+import { FlintClient } from "../../../client/FlintClient.js"
+import { log } from "../../../utils/logger.js"
 import { Message } from "@fluxerjs/core"
 import ms, { StringValue } from "ms"
-import { log } from "../../../utils/logger"
 
 export interface SpamFilterOptions {
     threshold?: number

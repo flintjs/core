@@ -1,5 +1,5 @@
-import { BaseListener } from "../structures/BaseListener"
-import { BaseHandler } from "./BaseHandler"
+import { BaseListener } from "../structures/BaseListener.js"
+import { BaseHandler } from "./BaseHandler.js"
 
 export class ListenerHandler extends BaseHandler<BaseListener> {
 

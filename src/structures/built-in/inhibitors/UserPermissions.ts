@@ -1,6 +1,6 @@
-import type { CommandContext } from "../../../executor/CommandContext"
-import type { BaseCommand } from "../../../structures/BaseCommand"
-import { BaseInhibitor, ok, err } from "../../BaseInhibitor"
+import type { CommandContext } from "../../../executor/CommandContext.js"
+import { BaseInhibitor, ok, err } from "../../BaseInhibitor.js"
+import type { BaseCommand } from "../../BaseCommand.js"
 import { PermissionsBitField } from "@fluxerjs/core"
 
 export class UserPermissions extends BaseInhibitor {

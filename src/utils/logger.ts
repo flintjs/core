@@ -1,4 +1,4 @@
-import type { ILogger } from "../types/ILogger"
+import type { ILogger } from "../types/ILogger.js"
 let _logger: ILogger | undefined
 
 export function setLogger(logger: ILogger): void {

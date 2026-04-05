@@ -1,8 +1,8 @@
-import type { CommandContext } from "../executor/CommandContext"
-import { InhibitorResult } from "../structures/BaseInhibitor"
-import type { BaseCommand } from "../structures/BaseCommand"
-import { BaseInhibitor } from "../structures/BaseInhibitor"
-import { BaseHandler } from "./BaseHandler"
+import type { CommandContext } from "../executor/CommandContext.js"
+import { InhibitorResult } from "../structures/BaseInhibitor.js"
+import type { BaseCommand } from "../structures/BaseCommand.js"
+import { BaseInhibitor } from "../structures/BaseInhibitor.js"
+import { BaseHandler } from "./BaseHandler.js"
 
 export class InhibitorHandler extends BaseHandler<BaseInhibitor> {
 

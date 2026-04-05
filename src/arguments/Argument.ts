@@ -1,4 +1,4 @@
-import type { FlintClient } from "../client/FlintClient"
+import type { FlintClient } from "../client/FlintClient.js"
 import type { Message } from "@fluxerjs/core"
 
 export type ArgumentMatch = "phrase" | "rest" | "flag" | "option"

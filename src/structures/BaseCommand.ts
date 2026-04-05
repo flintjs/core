@@ -1,9 +1,9 @@
+import type { ArgumentOptions } from "../arguments/Argument.js"
 import { Message, PermissionResolvable } from "@fluxerjs/core"
-import type { ArgumentOptions } from "../arguments/Argument"
-import { CommandMeta } from "../executor/CommandContext"
-import { FlintClient } from "../client/FlintClient"
-import { ResolveArgs } from "../arguments/types"
-import { Awaitable } from "../types"
+import { CommandMeta } from "../executor/CommandContext.js"
+import { FlintClient } from "../client/FlintClient.js"
+import { ResolveArgs } from "../arguments/types.js"
+import { Awaitable } from "../types/index.js"
 import { StringValue } from "ms"
 
 export interface BaseCommandOptions<K> {

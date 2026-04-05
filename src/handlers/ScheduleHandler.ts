@@ -1,9 +1,9 @@
-import { BaseHandler, BaseHandlerOptions } from "./BaseHandler"
-import type { BaseSchedule } from "../structures/BaseSchedule"
-import type { BaseProvider } from "../structures/BaseProvider"
-import type { FlintClient } from "../client/FlintClient"
-import { JSONProvider } from "../providers/JSONProvider"
-import { log } from "../utils/logger"
+import { BaseHandler, BaseHandlerOptions } from "./BaseHandler.js"
+import type { BaseSchedule } from "../structures/BaseSchedule.js"
+import type { BaseProvider } from "../structures/BaseProvider.js"
+import type { FlintClient } from "../client/FlintClient.js"
+import { JSONProvider } from "../providers/JSONProvider.js"
+import { log } from "../utils/logger.js"
 
 export interface ScheduledTask<TData = unknown> {
     id: string

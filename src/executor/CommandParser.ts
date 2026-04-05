@@ -1,6 +1,7 @@
 export interface ParseResult {
     commandName: string
     args: string[]
+    rawRest: string
     prefix: string
 }
 
@@ -61,6 +62,7 @@ export function parseMessage(
             return {
                 commandName: commandName.toLowerCase(),
                 args,
+                rawRest: rest.slice(commandName.length).trim(),
                 prefix: mentionMatch[0]
             }
         }
@@ -76,6 +78,7 @@ export function parseMessage(
     return {
         commandName: commandName.toLowerCase(),
         args,
+        rawRest: rest.slice(commandName.length).trim(),
         prefix: matchedPrefix
     }
 }

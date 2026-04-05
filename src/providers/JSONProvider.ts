@@ -1,4 +1,4 @@
-import { BaseProvider } from "../structures/BaseProvider"
+import { BaseProvider } from "../structures/BaseProvider.js"
 import fs from "node:fs"
 
 export interface JSONProviderOptions {
@@ -65,6 +65,10 @@ export class JSONProvider extends BaseProvider {
     async clear(): Promise<void> {
         this.#store.clear()
         this.#scheduleSave()
+    }
+
+    async keys(): Promise<string[]> {
+        return [...this.#store.keys()]
     }
 
 }

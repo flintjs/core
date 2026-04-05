@@ -1,7 +1,7 @@
-import type { CommandContext } from "../executor/CommandContext"
+import type { CommandContext } from "../executor/CommandContext.js"
 import type { PermissionResolvable } from "@fluxerjs/core"
-import type { BaseCommand } from "./BaseCommand"
-import type { Awaitable } from "../types"
+import type { BaseCommand } from "./BaseCommand.js"
+import type { Awaitable } from "../types/index.js"
 
 export type InhibitorType = "ownerOnly" | "disabled" | "channel" | "user.permissions" | "bot.permissions" | "cooldown" | "unknown"
 

@@ -1,6 +1,6 @@
-import { ScheduledTask } from "../handlers/ScheduleHandler"
-import type { FlintClient } from "../client/FlintClient"
-import type { Awaitable } from "../types"
+import { ScheduledTask } from "../handlers/ScheduleHandler.js"
+import type { FlintClient } from "../client/FlintClient.js"
+import type { Awaitable } from "../types/index.js"
 
 export abstract class BaseSchedule<TData = unknown> {
 

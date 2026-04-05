@@ -1,7 +1,7 @@
 import type { User, GuildMember, Role, GuildChannel, Message } from "@fluxerjs/core"
-import { BaseCommand as Command } from "../structures/BaseCommand"
-import type { ArgumentOptions, ArgumentType } from "./Argument"
-import type { FlintClient } from "../client/FlintClient"
+import { BaseCommand as Command } from "../structures/BaseCommand.js"
+import type { ArgumentOptions, ArgumentType } from "./Argument.js"
+import type { FlintClient } from "../client/FlintClient.js"
 
 export type ResolveArgumentType<T extends ArgumentType> =
     T extends "string" ? string :

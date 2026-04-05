@@ -1,7 +1,7 @@
-import { importFile, scanFolder } from "../utils/fileUtils"
-import { FlintClient } from "../client/FlintClient"
-import { log, setLogger } from "../utils/logger"
-import type { ILogger } from "../types/ILogger"
+import { importFile, scanFolder } from "../utils/fileUtils.js"
+import { FlintClient } from "../client/FlintClient.js"
+import { log, setLogger } from "../utils/logger.js"
+import type { ILogger } from "../types/ILogger.js"
 import { isFunction } from "@flint.js/utils"
 
 export interface BaseHandlerOptions {

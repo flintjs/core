@@ -1,5 +1,5 @@
-import { InhibitorResult } from "../structures/BaseInhibitor"
-import { CommandContext } from "../executor/CommandContext"
+import { InhibitorResult } from "../structures/BaseInhibitor.js"
+import { CommandContext } from "../executor/CommandContext.js"
 import { Message } from "@fluxerjs/core"
 
 export type Awaitable<T> = T | Promise<T>

@@ -1,7 +1,7 @@
-import { FlintClient } from "../../../client/FlintClient"
-import { parseTimeValueToMs } from "../../../utils/ms"
-import { BaseMonitor } from "../../BaseMonitor"
-import { log } from "../../../utils/logger"
+import { FlintClient } from "../../../client/FlintClient.js"
+import { parseTimeValueToMs } from "../../../utils/ms.js"
+import { BaseMonitor } from "../../BaseMonitor.js"
+import { log } from "../../../utils/logger.js"
 import { Message } from "@fluxerjs/core"
 import { StringValue } from "ms"
 

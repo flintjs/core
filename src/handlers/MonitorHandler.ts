@@ -1,6 +1,6 @@
-import { BaseMonitor } from "../structures/BaseMonitor"
-import { FlintClient } from "../client/FlintClient"
-import { BaseHandler } from "./BaseHandler"
+import { BaseMonitor } from "../structures/BaseMonitor.js"
+import { FlintClient } from "../client/FlintClient.js"
+import { BaseHandler } from "./BaseHandler.js"
 import { Message } from "@fluxerjs/core"
 
 export class MonitorHandler extends BaseHandler<BaseMonitor> {

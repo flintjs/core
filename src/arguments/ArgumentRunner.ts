@@ -1,6 +1,6 @@
-import { Argument, type ArgumentOptions } from "./Argument"
-import type { FlintClient } from "../client/FlintClient"
-import type { TypeResolver } from "./TypeResolver"
+import { Argument, type ArgumentOptions } from "./Argument.js"
+import type { FlintClient } from "../client/FlintClient.js"
+import type { TypeResolver } from "./TypeResolver.js"
 import type { Message } from "@fluxerjs/core"
 
 export class ArgumentRunner {
@@ -11,7 +11,13 @@ export class ArgumentRunner {
         this.#resolver = resolver
     }
 
-    async run(client: FlintClient, message: Message, rawArgs: string[], argDefinitions: readonly ArgumentOptions[]): Promise<Record<string, unknown>> {
+    async run(
+        client: FlintClient,
+        message: Message,
+        rawArgs: string[],
+        rawRest: string,
+        argDefinitions: readonly ArgumentOptions[]
+    ): Promise<Record<string, unknown>> {
 
         const args = argDefinitions.map(def => new Argument(def))
         const result: Record<string, unknown> = {}
@@ -73,8 +79,19 @@ export class ArgumentRunner {
                 }
 
                 case "rest": {
-                    const phrase = cleanArgs.slice(phraseIndex).join(" ")
-                    phraseIndex = cleanArgs.length
+                    const parts = rawRest.match(/(?:[^\s"']+|"[^"]*"|'[^']*')+/g) ?? []
+                    let phrase = parts.slice(phraseIndex).join(" ")
+
+                    for (const arg of args) {
+                        if (arg.match === "flag" || arg.match === "option") {
+                            const flags = arg.flag ?? []
+                            for (const flag of flags) {
+                                phrase = phrase.replace(new RegExp(`\\s*${flag}(=\\S+|\\s+\\S+)?`, "g"), "")
+                            }
+                        }
+                    }
+
+                    phrase = phrase.trim()
                     const resolved = await this.#cast(arg, client, message, phrase)
                     result[arg.id] = resolved ?? arg.resolveDefault(client, message)
                     break

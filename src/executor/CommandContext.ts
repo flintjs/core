@@ -1,6 +1,6 @@
-import type { ParseResult } from "../executor/CommandParser"
-import type { BaseCommand } from "../structures/BaseCommand"
-import type { FlintClient } from "../client/FlintClient"
+import type { ParseResult } from "../executor/CommandParser.js"
+import type { BaseCommand } from "../structures/BaseCommand.js"
+import type { FlintClient } from "../client/FlintClient.js"
 import type { Message } from "@fluxerjs/core"
 
 export interface CommandContext {

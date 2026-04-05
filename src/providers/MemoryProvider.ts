@@ -1,4 +1,4 @@
-import { BaseProvider } from "../structures/BaseProvider"
+import { BaseProvider } from "../structures/BaseProvider.js"
 
 export class MemoryProvider extends BaseProvider {
 
@@ -23,4 +23,9 @@ export class MemoryProvider extends BaseProvider {
     async clear(): Promise<void> {
         this.#store.clear()
     }
+
+    async keys(): Promise<string[]> {
+        return [...this.#store.keys()]
+    }
+
 }

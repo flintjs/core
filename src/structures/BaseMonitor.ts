@@ -1,6 +1,6 @@
-import type { FlintClient } from "../client/FlintClient"
+import type { FlintClient } from "../client/FlintClient.js"
+import type { Awaitable } from "../types/index.js"
 import type { Message } from "@fluxerjs/core"
-import type { Awaitable } from "../types"
 
 export interface BaseMonitorOptions {
     disabled?: boolean

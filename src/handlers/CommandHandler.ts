@@ -1,12 +1,12 @@
 import { PermissionResolvable, PermissionsBitField } from "@fluxerjs/core"
-import { BaseHandler, BaseHandlerOptions } from "./BaseHandler"
-import { ArgumentRunner } from "../arguments/ArgumentRunner"
-import { TypeResolver } from "../arguments/TypeResolver"
-import { BaseCommand } from "../structures/BaseCommand"
-import { InhibitorHandler } from "./InhibitorHandler"
-import { FlintClient } from "../client/FlintClient"
-import { ListenerHandler } from "./ListenerHandler"
-import { MonitorHandler } from "./MonitorHandler"
+import { BaseHandler, BaseHandlerOptions } from "./BaseHandler.js"
+import { ArgumentRunner } from "../arguments/ArgumentRunner.js"
+import { TypeResolver } from "../arguments/TypeResolver.js"
+import { BaseCommand } from "../structures/BaseCommand.js"
+import { InhibitorHandler } from "./InhibitorHandler.js"
+import { FlintClient } from "../client/FlintClient.js"
+import { ListenerHandler } from "./ListenerHandler.js"
+import { MonitorHandler } from "./MonitorHandler.js"
 
 export interface CommandHandlerOptions extends BaseHandlerOptions {
     prefix: string

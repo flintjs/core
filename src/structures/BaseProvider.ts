@@ -7,5 +7,6 @@ export abstract class BaseProvider {
     abstract delete(key: string): Promise<void>
     abstract has(key: string): Promise<boolean>
     abstract clear(): Promise<void>
+    abstract keys(): Promise<string[]>
 
 }
