@@ -107,7 +107,7 @@ export class ArgumentRunner {
         if (typeof arg.type === "function") {
             return await arg.type(client, message, phrase)
         }
-        return await this.#resolver.resolve(arg.type, client, message, phrase)
+        return await this.#resolver.resolve(arg.type, client, message, phrase, arg)
     }
 
 }

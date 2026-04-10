@@ -4,6 +4,7 @@ import type { Message } from "@fluxerjs/core"
 export type ArgumentMatch = "phrase" | "rest" | "flag" | "option"
 
 export type ArgumentType =
+    | "subcommand"
     | "string"
     | "StringValue"
     | "number"
@@ -22,8 +23,10 @@ export interface ArgumentOptions {
     id: string
     type?: ArgumentType
     match?: ArgumentMatch
+    options?: string[]
     flag?: string | string[]
     default?: unknown | ((client: FlintClient, message: Message) => unknown)
+    required?: boolean
 }
 
 export class Argument {
@@ -32,7 +35,9 @@ export class Argument {
     type: ArgumentType
     match: ArgumentMatch
     flag?: string[]
+    options?: string[]
     default?: unknown | ((client: FlintClient, message: Message) => unknown)
+    required?: boolean
 
     constructor(options: ArgumentOptions) {
         this.id = options.id
@@ -41,7 +46,9 @@ export class Argument {
         this.flag = options.flag
             ? Array.isArray(options.flag) ? options.flag : [options.flag]
             : undefined
+        this.options = options.options ?? []
         this.default = options.default ?? null
+        this.required = options.required ?? true
     }
 
     resolveDefault(client: FlintClient, message: Message): unknown {

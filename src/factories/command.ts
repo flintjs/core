@@ -1,10 +1,10 @@
-import { CommandMeta } from "../executor/CommandContext"
-import type { FlintClient } from "../client/FlintClient"
-import { BaseCommand } from "../structures/BaseCommand"
-import { ArgumentOptions } from "../arguments/Argument"
-import { ResolveArgs } from "../arguments/types"
+import { CommandMeta } from "../executor/CommandContext.js"
+import type { FlintClient } from "../client/FlintClient.js"
+import { BaseCommand } from "../structures/BaseCommand.js"
+import { ArgumentOptions } from "../arguments/Argument.js"
+import { ResolveArgs } from "../arguments/types.js"
+import type { Awaitable } from "../types/index.js"
 import type { Message } from "@fluxerjs/core"
-import type { Awaitable } from "../types"
 
 export function defineCommand<
     TClient extends FlintClient = FlintClient,

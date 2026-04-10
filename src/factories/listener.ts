@@ -1,6 +1,6 @@
-import type { BaseListener, WithClient, ExtendedListeners } from "../structures/BaseListener"
-import { FlintClient } from "../client/FlintClient"
-import type { Awaitable } from "../types"
+import type { BaseListener, WithClient, ExtendedListeners } from "../structures/BaseListener.js"
+import { FlintClient } from "../client/FlintClient.js"
+import type { Awaitable } from "../types/index.js"
 
 export function defineListener<
     TClient extends FlintClient = FlintClient,

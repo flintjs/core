@@ -1,8 +1,9 @@
 import type { FlintClient } from "../client/FlintClient.js"
 import type { Message } from "@fluxerjs/core"
+import { Argument } from "./Argument.js"
 import ms, { StringValue } from "ms"
 
-export type TypeResolverFn = (client: FlintClient, message: Message, phrase: string) => unknown | Promise<unknown>
+export type TypeResolverFn = (client: FlintClient, message: Message, phrase: string, arg: Argument) => unknown | Promise<unknown>
 
 export class TypeResolver {
 
@@ -17,10 +18,10 @@ export class TypeResolver {
         return this
     }
 
-    resolve(name: string, client: FlintClient, message: Message, phrase: string): unknown {
+    resolve(name: string, client: FlintClient, message: Message, phrase: string, arg: Argument): unknown {
         const resolver = this.#types.get(name)
         if (!resolver) throw new Error(`[Flint] Unknown argument type: "${name}"`)
-        return resolver(client, message, phrase)
+        return resolver(client, message, phrase, arg)
     }
 
     has(name: string): boolean {
@@ -30,27 +31,33 @@ export class TypeResolver {
     #registerBuiltins(client: FlintClient): void {
 
         this.addType("string", (_, __, phrase) => phrase || null)
+
         this.addType("StringValue", (_, __, phrase) => {
             const n = ms(phrase as StringValue)
             return isNaN(n) ? null : n
         })
+
         this.addType("number", (_, __, phrase) => {
             const n = Number(phrase)
             return isNaN(n) ? null : n
         })
+
         this.addType("integer", (_, __, phrase) => {
             const n = parseInt(phrase)
             return isNaN(n) ? null : n
         })
+
         this.addType("float", (_, __, phrase) => {
             const n = parseFloat(phrase)
             return isNaN(n) ? null : n
         })
+
         this.addType("boolean", (_, __, phrase) => {
             if (["true", "yes", "1", "on"].includes(phrase.toLowerCase())) return true
             if (["false", "no", "0", "off"].includes(phrase.toLowerCase())) return false
             return null
         })
+
         this.addType("url", (_, __, phrase) => {
             try { return new URL(phrase) } catch { return null }
         })
@@ -60,6 +67,13 @@ export class TypeResolver {
 
             return client.commandHandler.getCommand(phrase) ??
                 client.commandHandler.getCommandByAlias(phrase)
+        })
+
+        this.addType("subcommand", (client, _, phrase, arg) => {
+            if (!arg.required) return phrase
+            if (!arg.options?.length) return null
+            const match = arg.options.find(o => o === phrase)
+            return match ?? null
         })
 
         this.addType("user", async (client, _, phrase) => {
@@ -76,6 +90,7 @@ export class TypeResolver {
                 u.globalName?.toLowerCase() === lower
             ) ?? null
         })
+
         this.addType("member", async (_, message, phrase) => {
             if (!phrase || !message.guild) return null
 
@@ -91,6 +106,7 @@ export class TypeResolver {
                 m.nick?.toLowerCase() === lower
             ) ?? null
         })
+
         this.addType("role", async (_, message, phrase) => {
             if (!phrase || !message.guild) return null
 
@@ -101,6 +117,7 @@ export class TypeResolver {
             const lower = phrase.toLowerCase()
             return message.guild.roles.find(r => r.name.toLowerCase() === lower) ?? null
         })
+
         this.addType("channel", async (_, message, phrase) => {
             if (!phrase || !message.guild) return null
 
