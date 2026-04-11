@@ -78,4 +78,25 @@ export class CommandHandler extends BaseHandler<BaseCommand> {
             : []
     }
 
+    getCommandUsage(command: BaseCommand) {
+        let args = []
+        args.push(command.name)
+
+        for (const arg of command.args ?? []) {
+            const rest = arg.match === "rest"
+            if (arg.flag?.length) continue
+            if (arg?.required === false) {
+                args.push(`[${arg.id}${rest ? "..." : ""}]`)
+            } else {
+                args.push(`<${arg.id}${rest ? "..." : ""}>`)
+            }
+        }
+
+        return {
+            usage: args.join(" "),
+            flags: (command.args ?? []).filter((a) => a.match === "flag").map((a) => `--${a.id}`) ?? [],
+            options: (command.args ?? []).filter((a) => a.match === "option").map((a) => `--${a.id}=${a.type}`) ?? [],
+        }
+    }
+
 }
