@@ -3,8 +3,8 @@ import { BaseListener } from "../structures/BaseListener.js"
 import { FlintClientListeners } from "../types/index.js"
 import { FlintClient } from "../client/FlintClient.js"
 import { kInhibitors } from "../internal/symbols.js"
-import { Events, Message } from "@fluxerjs/core"
 import { parseMessage } from "./CommandParser.js"
+import { Events, Message } from "@fluxerjs/core"
 
 export class CommandExecutor extends BaseListener {
 
@@ -75,6 +75,19 @@ export class CommandExecutor extends BaseListener {
             parsed.rawRest,
             command.args ?? []
         )
+
+        const commandArgs = command.args?.map(a => ({
+            ...a,
+            required: "required" in a ? a.required : true
+        })) ?? []
+
+        for (const arg of commandArgs) {
+            if (!arg.required) continue
+            if (!parsedArgs[arg.id]) {
+                client.emit(FlintClientListeners.CommandMissingRequiredArgument, { ctx, command, argument: arg.id })
+                return
+            }
+        }
 
         try {
             const commandCtx = buildContext(client, message, parsed, parsedArgs, command)

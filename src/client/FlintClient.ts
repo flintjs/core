@@ -28,7 +28,10 @@ export class FlintClient extends Client {
     owners: string[]
 
     public constructor(flintOptions: FlintClientOptions, public readonly fluxerOptions: FluxerClientOptions = {}) {
-        super({ ...fluxerOptions, intents: 0 })
+        super({
+            ...fluxerOptions,
+            intents: 0
+        })
         this[kListeners] = new ListenerHandler(this, {
             directory: "",
             builtins: [new CommandExecutor()]

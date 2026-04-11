@@ -1,6 +1,7 @@
 import { InhibitorResult } from "../structures/BaseInhibitor.js"
 import { CommandContext } from "../executor/CommandContext.js"
 import { Message } from "@fluxerjs/core"
+import { Command } from "../index.js"
 
 export type Awaitable<T> = T | Promise<T>
 export type MaybeArray<T> = T | T[]
@@ -10,7 +11,8 @@ export const FlintClientListeners = {
     CommandDenied: "commandDenied",
     CommandError: "commandError",
     CommandSuccess: "commandSuccess",
-    CommandNotFound: "commandNotFound"
+    CommandNotFound: "commandNotFound",
+    CommandMissingRequiredArgument: "commandMissingRequiredArgument",
 } as const
 
 export type FlintClientListenerType = typeof FlintClientListeners[keyof typeof FlintClientListeners]
@@ -31,6 +33,11 @@ export interface FlintListeners {
         prefix: string
         name: string
         message: Message
+    }]
+    [FlintClientListeners.CommandMissingRequiredArgument]: [payload: {
+        ctx: CommandContext
+        command: Command
+        argument: string
     }]
 }
 
